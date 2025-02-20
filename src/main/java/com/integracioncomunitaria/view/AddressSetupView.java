@@ -146,19 +146,26 @@ public class AddressSetupView extends JFrame {
         String number = txtNumber.getText().trim();
         String dpto = txtDpto.getText().trim();
         String floor = txtFloor.getText().trim();
-
+    
         if (street.isEmpty() || province == null || department == null || city == null) {
             JOptionPane.showMessageDialog(this, "Todos los campos obligatorios deben estar completos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+    
         int provinceId = controller.getProvinceId(province);
         int departmentId = controller.getDepartmentId(department);
         int cityId = controller.getCityId(city);
-
+    
         ResultDataBase result = controller.saveAddress(idProvider, provinceId, departmentId, cityId, street, number, dpto, floor);
-
+    
         JOptionPane.showMessageDialog(this, result.getMessage(), "Información", JOptionPane.INFORMATION_MESSAGE);
-        dispose();
+    
+        if (result.getSuccess()) {
+            SwingUtilities.invokeLater(() -> {
+                new ZoneSetupView(idProvider).setVisible(true);
+                dispose(); // Cierra la ventana actual
+            });
+        }
     }
+    
 }
