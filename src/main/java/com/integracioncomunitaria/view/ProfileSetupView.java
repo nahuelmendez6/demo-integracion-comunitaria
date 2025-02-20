@@ -79,10 +79,17 @@ public class ProfileSetupView extends JFrame {
         JOptionPane.showMessageDialog(this, result.getMessage(), "Información", JOptionPane.INFORMATION_MESSAGE);
 
         if (result.getSuccess()) {
-            
-            // Si el perfil se guardó correctamente, abrir la pantalla de dirección y cerrar esta ventana
+            // Obtener id_provider basado en userId
+            int idProvider = controller.getProviderIdByUserId(userId);
+
+            if (idProvider == -1) {
+                JOptionPane.showMessageDialog(this, "No se pudo obtener el ID del proveedor.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Si el perfil se guardó correctamente, abrir la pantalla de dirección con el id_provider
             SwingUtilities.invokeLater(() -> {
-                new AddressSetupView(userId).setVisible(true);
+                new AddressSetupView(idProvider).setVisible(true);
                 dispose(); // Cierra la ventana actual
             });
         }

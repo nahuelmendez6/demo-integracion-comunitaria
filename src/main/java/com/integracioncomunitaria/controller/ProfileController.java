@@ -8,6 +8,23 @@ import java.util.ArrayList;
 
 public class ProfileController {
 
+    public int getProviderIdByUserId(int userId) {
+        String query = "SELECT id_provider FROM provider WHERE id_user = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_provider");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Retorna -1 si no se encuentra el proveedor
+    }
+    
+
     public String[] loadCategories() {
         ArrayList<String> categories = new ArrayList<>();
         String sql = "SELECT name FROM category";
