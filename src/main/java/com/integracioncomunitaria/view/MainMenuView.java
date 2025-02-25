@@ -69,7 +69,7 @@ public class MainMenuView extends JFrame {
         btnPublishOffers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new OfferView().setVisible(true);
+                new OfferView(providerId).setVisible(true);
             }
         });
         buttonPanel.add(btnPublishOffers);

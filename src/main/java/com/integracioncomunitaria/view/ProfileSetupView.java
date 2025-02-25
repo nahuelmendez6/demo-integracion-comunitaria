@@ -89,7 +89,7 @@ public class ProfileSetupView extends JFrame {
 
             // Si el perfil se guardó correctamente, abrir la pantalla de dirección con el id_provider
             SwingUtilities.invokeLater(() -> {
-                new AddressSetupView(idProvider).setVisible(true);
+                new AvailabilityView(idProvider).setVisible(true);
                 dispose(); // Cierra la ventana actual
             });
         }
