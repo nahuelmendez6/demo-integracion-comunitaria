@@ -89,7 +89,7 @@ public class MainView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Abre la vista de inicio de sesión
-                //new LoginView().setVisible(true);
+                new LoginView().setVisible(true);
                 dispose(); // Cierra la ventana actual
             }
         });

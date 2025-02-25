@@ -1,13 +1,17 @@
 package com.integracioncomunitaria.view;
-
+import com.integracioncomunitaria.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainMenuView extends JFrame {
-    public MainMenuView() {
-        setTitle("Menú Principal - Proveedor");
+    
+    private int providerId;
+    
+    public MainMenuView(int providerId) {
+        this.providerId = providerId;
+        setTitle("Menú Principal");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -124,9 +128,11 @@ public class MainMenuView extends JFrame {
         return button;
     }
 
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new MainMenuView().setVisible(true);
         });
     }
+     */
 }

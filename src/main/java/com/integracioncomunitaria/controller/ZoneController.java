@@ -27,12 +27,11 @@ public class ZoneController {
         return cities;
     }
 
-    public int createZone(int providerId, String zoneName) {
-        String sql = "INSERT INTO provider_zone (id_provider, name) VALUES (?, ?)";
+    public int createZone(int providerId) {
+        String sql = "INSERT INTO provider_zone (id_provider) VALUES (?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, providerId);
-            ps.setString(2, zoneName);
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();

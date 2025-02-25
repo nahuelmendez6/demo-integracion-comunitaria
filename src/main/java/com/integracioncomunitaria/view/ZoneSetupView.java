@@ -28,7 +28,7 @@ public class ZoneSetupView extends JFrame {
         addressController = new AddressController();
 
         setTitle("Configuración de Zona de Trabajo");
-        setSize(600, 500);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -64,8 +64,10 @@ public class ZoneSetupView extends JFrame {
     private void updateDepartmentCheckboxes(String province) {
         departmentPanel.removeAll();
         departmentCityMap.clear();
+        int id_province = addressController.getProvinceId(province);
+        
 
-        List<String> departments = addressController.loadDepartments(province);
+        List<String> departments = addressController.loadDepartments(id_province);
         List<JCheckBox> departmentCheckBoxes = new ArrayList<>();
 
         for (String department : departments) {
@@ -86,8 +88,13 @@ public class ZoneSetupView extends JFrame {
         departmentPanel.repaint();
     }
 
+    
+
     private void updateCityCheckboxes(String department) {
-        List<String> cities = addressController.loadCities(department);
+
+        int id_departament = addressController.getDepartmentId(department);
+
+        List<String> cities = addressController.loadCities(id_departament);
         List<JCheckBox> checkBoxes = new ArrayList<>();
 
         for (String city : cities) {
@@ -113,14 +120,14 @@ public class ZoneSetupView extends JFrame {
     }
 
     private void saveZone() {
-        String zoneName = JOptionPane.showInputDialog(this, "Nombre de la Zona:", "Definir Zona", JOptionPane.PLAIN_MESSAGE);
+        //String zoneName = JOptionPane.showInputDialog(this, "Nombre de la Zona:", "Definir Zona", JOptionPane.PLAIN_MESSAGE);
 
-        if (zoneName == null || zoneName.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar un nombre para la zona.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        //if (zoneName == null || zoneName.trim().isEmpty()) {
+        //    JOptionPane.showMessageDialog(this, "Debe ingresar un nombre para la zona.", "Error", JOptionPane.ERROR_MESSAGE);
+        //    return;
+        //}
 
-        int idZone = controller.createZone(providerId, zoneName);
+        int idZone = controller.createZone(providerId);
         if (idZone == -1) {
             JOptionPane.showMessageDialog(this, "Error al crear la zona.", "Error", JOptionPane.ERROR_MESSAGE);
             return;

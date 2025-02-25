@@ -4,12 +4,23 @@ import com.integracioncomunitaria.database.DatabaseConnection;
 import com.integracioncomunitaria.model.User;
 import com.integracioncomunitaria.database.ResultDataBase;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class UserController {
+
+    private static final String UPLOAD_DIRECTORY = "uploads/";
 
     public ResultDataBase registerUser(User user, String group) {
         ResultDataBase result = new ResultDataBase();
@@ -45,4 +56,34 @@ public class UserController {
 
         return result;
     }
+
+
+    public boolean uploadProfilePicture(String email, File imageFile) {
+        try {
+            // Crear la carpeta de destino si no existe
+            File uploadDir = new File(UPLOAD_DIRECTORY);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            
+            // Definir el archivo de destino
+            File destinationFile = new File(UPLOAD_DIRECTORY + email + "_profile.jpg");
+            
+            // Copiar el archivo seleccionado al destino
+            try (FileInputStream fis = new FileInputStream(imageFile);
+                 FileOutputStream fos = new FileOutputStream(destinationFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, length);
+                }
+            }
+            
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
