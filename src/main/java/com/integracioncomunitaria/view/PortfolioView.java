@@ -1,193 +1,212 @@
 package com.integracioncomunitaria.view;
 
+import com.integracioncomunitaria.controller.PortfolioController;
+import com.integracioncomunitaria.controller.ProfileController;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class PortfolioView extends JFrame {
     private JTable portfolioTable;
     private DefaultTableModel tableModel;
     private JButton btnCreatePortfolio;
+    private JButton btnAttachFile;
     private JButton btnViewAttachments;
+    private PortfolioController portfolioController;
+    private ProfileController profileController;
+    private int providerId;
 
-    // Datos hardcodeados de portfolios
-    private List<Portfolio> portfolios = new ArrayList<>();
+    public PortfolioView(int providerId) {
+        this.providerId = providerId;
+        this.portfolioController = new PortfolioController();
+        this.profileController = new ProfileController();
 
-    public PortfolioView() {
         setTitle("Gestión de Portfolios");
-        setSize(1000, 600); // Aumentamos el tamaño para la tabla
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cierra solo esta ventana
+        setSize(1000, 600);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Hardcodeo de portfolios de ejemplo
-        portfolios.add(new Portfolio(1, "Portfolio 1", "Descripción del Portfolio 1", "2023-10-01"));
-        portfolios.add(new Portfolio(2, "Portfolio 2", "Descripción del Portfolio 2", "2023-10-02"));
-
         // Crear la tabla
-        String[] columnNames = {"Nombre", "Descripción", "Fecha de Creación", "Archivos Adjuntos"};
-        tableModel = new DefaultTableModel(columnNames, 0);
+        String[] columnNames = {"ID", "Nombre", "Descripción", "Fecha de Creación"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         portfolioTable = new JTable(tableModel);
-        portfolioTable.setRowHeight(30); // Ajustar altura de las filas
+        portfolioTable.setRowHeight(30);
         JScrollPane scrollPane = new JScrollPane(portfolioTable);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Actualizar la tabla con los datos hardcodeados
         updatePortfolioTable();
 
-        // Panel de botones
         JPanel buttonPanel = new JPanel();
         btnCreatePortfolio = new JButton("Crear Portfolio");
-        btnCreatePortfolio.setBackground(new Color(72, 201, 176));
-        btnCreatePortfolio.setForeground(Color.WHITE);
-        btnCreatePortfolio.setFocusPainted(false);
-        btnCreatePortfolio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showCreatePortfolioDialog();
-            }
-        });
+        btnCreatePortfolio.addActionListener(e -> showCreatePortfolioDialog());
 
-        btnViewAttachments = new JButton("Ver Archivos Adjuntos");
-        btnViewAttachments.setBackground(new Color(52, 152, 219));
-        btnViewAttachments.setForeground(Color.WHITE);
-        btnViewAttachments.setFocusPainted(false);
-        btnViewAttachments.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                viewAttachments();
-            }
-        });
+        btnAttachFile = new JButton("Adjuntar Archivo");
+        btnAttachFile.addActionListener(e -> attachFileToPortfolio());
+
+        btnViewAttachments = new JButton("Ver Adjuntos");
+        btnViewAttachments.addActionListener(e -> viewAttachments());
 
         buttonPanel.add(btnCreatePortfolio);
+        buttonPanel.add(btnAttachFile);
         buttonPanel.add(btnViewAttachments);
 
-        // Agregar el panel de botones al sur
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // Método para actualizar la tabla de portfolios
     private void updatePortfolioTable() {
-        tableModel.setRowCount(0); // Limpiar la tabla
-        for (Portfolio portfolio : portfolios) {
+        tableModel.setRowCount(0);
+        List<Map<String, Object>> portfolios = portfolioController.getPortfoliosByProvider(providerId);
+        for (Map<String, Object> portfolio : portfolios) {
             Object[] rowData = {
-                    portfolio.getName(),
-                    portfolio.getDescription(),
-                    portfolio.getDateCreate(),
-                    "Ver Adjuntos" // Botón para ver archivos adjuntos
+                    portfolio.get("id_portfolio"),
+                    portfolio.get("name"),
+                    portfolio.get("description"),
+                    portfolio.get("date_create")
             };
             tableModel.addRow(rowData);
         }
     }
 
-    // Método para mostrar el diálogo de creación de portfolio
     private void showCreatePortfolioDialog() {
-        JTextField txtName = new JTextField();
-        JTextArea txtDescription = new JTextArea(5, 20);
-        JScrollPane scrollPane = new JScrollPane(txtDescription);
-
-        // Campo para adjuntar archivos
-        JButton btnAttachFile = new JButton("Adjuntar Archivo");
-        btnAttachFile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(null);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                    JOptionPane.showMessageDialog(null, "Archivo seleccionado: " + filePath);
-                    // Aquí puedes guardar la ruta del archivo o procesarlo
-                }
-            }
-        });
+        JTextField nameField = new JTextField();
+        JTextArea descriptionArea = new JTextArea(5, 20);
+        JScrollPane scrollPane = new JScrollPane(descriptionArea);
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.add(new JLabel("Nombre del Portfolio:"));
-        panel.add(txtName);
+        panel.add(nameField);
         panel.add(new JLabel("Descripción:"));
         panel.add(scrollPane);
-        panel.add(new JLabel("Adjuntar Archivo:"));
-        panel.add(btnAttachFile);
 
         int result = JOptionPane.showConfirmDialog(
-                this,
-                panel,
-                "Crear Nuevo Portfolio",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
+                this, panel, "Crear Nuevo Portfolio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
-            String name = txtName.getText().trim();
-            String description = txtDescription.getText().trim();
+            String name = nameField.getText().trim();
+            String description = descriptionArea.getText().trim();
 
             if (!name.isEmpty()) {
-                // Hardcodeo del nuevo portfolio
-                int newId = portfolios.size() + 1; // Simula un ID autoincremental
-                portfolios.add(new Portfolio(newId, name, description, "2023-10-03")); // Fecha hardcodeada
-                updatePortfolioTable(); // Actualiza la tabla
-                JOptionPane.showMessageDialog(this, "Portfolio creado con éxito.");
+                boolean success = portfolioController.createPortfolio(providerId,name, description);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Portfolio creado con éxito.");
+                    updatePortfolioTable();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al crear el portfolio.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "El nombre del portfolio es obligatorio.");
             }
         }
     }
 
-    // Método para ver los archivos adjuntos
-    private void viewAttachments() {
+    private void attachFileToPortfolio() {
         int selectedRow = portfolioTable.getSelectedRow();
-        if (selectedRow != -1) {
-            Portfolio selectedPortfolio = portfolios.get(selectedRow);
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Archivos adjuntos para: " + selectedPortfolio.getName(),
-                    "Archivos Adjuntos",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-            // Aquí puedes implementar la lógica para mostrar los archivos adjuntos
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecciona un portfolio para ver sus archivos adjuntos.");
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un portfolio para adjuntar un archivo.");
+            return;
+        }
+    
+        // Obtener el ID del portfolio seleccionado (ajusta según cómo guardes los datos en la tabla)
+        int portfolioId = (int) tableModel.getValueAt(selectedRow, 0); 
+    
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String fileName = selectedFile.getName();
+            String filePath = selectedFile.getAbsolutePath();
+        
+            int userId = profileController.getUserByProviderId(providerId);
+
+            boolean success = portfolioController.addAttachmentToPortfolio(portfolioId, fileName, filePath, userId);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Archivo adjuntado exitosamente.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al adjuntar el archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
+    
 
-    // Clase interna para representar un portfolio
-    private class Portfolio {
-        private int id;
-        private String name;
-        private String description;
-        private String dateCreate;
+    private void viewAttachments() {
 
-        public Portfolio(int id, String name, String description, String dateCreate) {
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.dateCreate = dateCreate;
+        int selectedRow = portfolioTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un portfolio para adjuntar un archivo.");
+            return;
         }
 
-        public int getId() {
-            return id;
-        }
+        int portfolioId = (int) tableModel.getValueAt(selectedRow, 0); 
 
-        public String getName() {
-            return name;
+        List<Map<String, Object>> attachments = portfolioController.getAttachmentsByPortfolio(portfolioId);
+    
+        if (attachments.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay archivos adjuntos en este portfolio.");
+            return;
         }
-
-        public String getDescription() {
-            return description;
+    
+        // Crear ventana de visualización
+        JDialog attachmentDialog = new JDialog(this, "Archivos Adjuntos", true);
+        attachmentDialog.setSize(600, 400);
+        attachmentDialog.setLocationRelativeTo(this);
+        attachmentDialog.setLayout(new BorderLayout());
+    
+        // Lista de archivos adjuntos
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        JList<String> fileList = new JList<>(listModel);
+    
+        // Panel para mostrar la imagen
+        JLabel imageLabel = new JLabel("", SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(400, 300));
+    
+        for (Map<String, Object> attachment : attachments) {
+            listModel.addElement(attachment.get("name").toString());
         }
-
-        public String getDateCreate() {
-            return dateCreate;
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new PortfolioView().setVisible(true);
+    
+        // Evento para mostrar imagen si es un archivo de imagen
+        fileList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedIndex = fileList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    String filePath = attachments.get(selectedIndex).get("path").toString();
+                    if (isImageFile(filePath)) {
+                        ImageIcon icon = new ImageIcon(filePath);
+                        Image image = icon.getImage().getScaledInstance(400, 300, Image.SCALE_SMOOTH);
+                        imageLabel.setIcon(new ImageIcon(image));
+                    } else {
+                        imageLabel.setIcon(null);
+                        JOptionPane.showMessageDialog(this, "No es una imagen: " + filePath);
+                    }
+                }
+            }
         });
+    
+        // Agregar componentes al diálogo
+        attachmentDialog.add(new JScrollPane(fileList), BorderLayout.WEST);
+        attachmentDialog.add(imageLabel, BorderLayout.CENTER);
+        attachmentDialog.setVisible(true);
     }
+    
+    // Método auxiliar para verificar si el archivo es una imagen
+    private boolean isImageFile(String filePath) {
+        String[] imageExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp"};
+        for (String ext : imageExtensions) {
+            if (filePath.toLowerCase().endsWith(ext)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
 }

@@ -78,4 +78,20 @@ public class AuthController {
         return null;
     }
 
+    public Integer getCustomerId(int userId) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT id_customer FROM customer WHERE id_user = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, userId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt("id_customer");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

@@ -23,6 +23,24 @@ public class ProfileController {
         }
         return -1; // Retorna -1 si no se encuentra el proveedor
     }
+
+    public int getUserByProviderId(int providerId) {
+        String query = "SELECT id_user FROM provider WHERE id_provider = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setInt(1, providerId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("id_user");
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return -1;
+
+    }
     
 
     public String[] loadCategories() {

@@ -79,7 +79,7 @@ public class MainView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Abre la vista de registro como cliente (puedes cambiar la clase si es diferente)
-                new RegisterView().setVisible(true);
+                new RegisterCustomerView().setVisible(true);
                 dispose(); // Cierra la ventana actual
             }
         });

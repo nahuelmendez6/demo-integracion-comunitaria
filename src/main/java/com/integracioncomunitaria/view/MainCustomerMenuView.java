@@ -5,12 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MainMenuView extends JFrame {
+public class MainCustomerMenuView extends JFrame {
     
-    private int providerId;
+    private int customerId;
     
-    public MainMenuView(int providerId) {
-        this.providerId = providerId;
+    public MainCustomerMenuView(int customerId) {
+        this.customerId = customerId;
         setTitle("Menú Principal");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,17 +31,6 @@ public class MainMenuView extends JFrame {
         buttonPanel.setLayout(new GridLayout(3, 2, 10, 10)); // 3 filas, 2 columnas
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Márgenes
 
-        // Botón: Crear Portfolio
-        JButton btnCreatePortfolio = createMenuButton("Crear Portfolio", new Color(52, 152, 219));
-        btnCreatePortfolio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Abrir la vista de Portfolio
-                new PortfolioView(providerId).setVisible(true);
-            }
-        });
-        buttonPanel.add(btnCreatePortfolio);
-
         // Botón: Configurar Perfil
         JButton btnConfigureProfile = createMenuButton("Configurar Perfil", new Color(46, 204, 113));
         btnConfigureProfile.addActionListener(new ActionListener() {
@@ -52,16 +41,6 @@ public class MainMenuView extends JFrame {
             }
         });
         buttonPanel.add(btnConfigureProfile);
-
-        // botón: Gestionar inventario
-        JButton btnInventory = createMenuButton("Gestionar inventario", new Color(50, 202, 110));
-        btnConfigureProfile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new InventoryView(providerId).setVisible(true);
-            }
-            });
-        buttonPanel.add(btnInventory);
 
         // Botón: Gestionar Dirección
         JButton btnManageAddress = createMenuButton("Gestionar Dirección", new Color(155, 89, 182));
@@ -75,11 +54,11 @@ public class MainMenuView extends JFrame {
         buttonPanel.add(btnManageAddress);
 
         // Botón: Publicar Ofertas
-        JButton btnPublishOffers = createMenuButton("Publicar Ofertas", new Color(241, 196, 15));
+        JButton btnPublishOffers = createMenuButton("Publicar Petición", new Color(241, 196, 15));
         btnPublishOffers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new OfferView(providerId).setVisible(true);
+                //new OfferView(providerId).setVisible(true);
             }
         });
         buttonPanel.add(btnPublishOffers);
@@ -96,11 +75,11 @@ public class MainMenuView extends JFrame {
         buttonPanel.add(btnViewOffers);
 
         // Botón: Ver Peticiones
-        JButton btnViewRequests = createMenuButton("Ver Peticiones", new Color(231, 76, 60));
+        JButton btnViewRequests = createMenuButton("Filtrar ofertas", new Color(231, 76, 60));
         btnViewRequests.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Ver Peticiones");
+                JOptionPane.showMessageDialog(null, "Acceso a Ver Ofertas");
                 // Aquí puedes redirigir a la pantalla de Ver Peticiones
             }
         });

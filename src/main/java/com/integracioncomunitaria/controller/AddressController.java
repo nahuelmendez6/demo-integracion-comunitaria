@@ -144,5 +144,33 @@ public int getProvinceId(String provinceName) {
             return new ResultDataBase(false, "Error al guardar la dirección: " + e.getMessage());
         }
     }
+
+    public ResultDataBase saveCustomerAddress(int idCustomer, int provinceId, int departmentId, int cityId, String street, String number, String dpto, String floor) {
+        String query = "INSERT INTO customer_address (id_customer, id_country,id_province, id_departament, id_city, street, number_str, dpto, floor_dpto, date_create) " +
+                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, idCustomer);
+            stmt.setInt(2, 7);
+            stmt.setInt(3, provinceId);
+            stmt.setInt(4, departmentId);
+            stmt.setInt(5, cityId);
+            stmt.setString(6, street);
+            stmt.setString(7, number);
+            stmt.setString(8, dpto);
+            stmt.setString(9, floor);
+    
+            int rowsInserted = stmt.executeUpdate();
+            if (rowsInserted > 0) {
+                return new ResultDataBase(true, "Dirección guardada exitosamente.");
+            } else {
+                return new ResultDataBase(false, "No se pudo guardar la dirección.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ResultDataBase(false, "Error al guardar la dirección: " + e.getMessage());
+        }
+    }
     
 }
