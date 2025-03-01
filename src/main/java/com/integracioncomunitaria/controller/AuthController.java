@@ -38,6 +38,31 @@ public class AuthController {
         return user;
     }
 
+    public Boolean userIsCustomer(int userId) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // buscar el usuario en la tabla user_profile
+            String sqlUserProfile = "SELECT id_profile, role_type FROM user_profile WHERE user_id = ?";
+            try (PreparedStatement stmtUser = conn.prepareStatement(sqlUserProfile)) {
+                stmtUser.setInt(1, userId);
+                ResultSet rsUser = stmtUser.executeQuery();
+
+                if (rsUser.next()) {
+                    int id_profile = rsUser.getInt("id_profile");
+                    String role_type = rsUser.getString("role_type");
+
+                    if (role_type.equals("cliente")) {
+                        return true;
+                    }
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     public Boolean userIsProvider(int userId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Buscar el usuario en la tabla user_prfile
@@ -50,7 +75,6 @@ public class AuthController {
                     int id_profile = rsUser.getInt("id_profile");
                     String role_type = rsUser.getString("role_type");
 
-                    // Verificar si la contraseña ingresada coincide con la almacenad
                     if (role_type.equals("proveedor")) {
                         return true;
                     }

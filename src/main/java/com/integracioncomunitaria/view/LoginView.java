@@ -57,8 +57,8 @@ public class LoginView extends JFrame {
 
             if (authController.userIsProvider(user.getIdUser())) {
                 openMainMenu(authController.getProviderId(user.getIdUser()));
-            //} else if (user.isCustomer()) {
-            //    openMainCustomerView(user.getCustomerId());
+            } else if (authController.userIsCustomer(user.getIdUser())) {
+                openMainCustomerView(authController.getCustomerId(user.getIdUser()));
             } else {
                 JOptionPane.showMessageDialog(this, "No tienes un rol asignado.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -70,6 +70,11 @@ public class LoginView extends JFrame {
     private void openMainMenu(int providerId) {
         this.dispose(); // Cierra la ventana de login
         new MainMenuView(providerId).setVisible(true);
+    }
+
+    private void openMainCustomerView(int customerId) {
+        this.dispose();
+        new MainCustomerMenuView(customerId).setVisible(true);
     }
 
     //private void openMainCustomerView(int customerId) {

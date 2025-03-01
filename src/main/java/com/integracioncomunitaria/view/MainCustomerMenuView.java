@@ -68,8 +68,7 @@ public class MainCustomerMenuView extends JFrame {
         btnViewOffers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Ver Ofertas");
-                // Aquí puedes redirigir a la pantalla de Ver Ofertas
+                new ProviderView(customerId).setVisible(true);;
             }
         });
         buttonPanel.add(btnViewOffers);
