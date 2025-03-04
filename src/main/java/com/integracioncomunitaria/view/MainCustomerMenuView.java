@@ -1,9 +1,12 @@
 package com.integracioncomunitaria.view;
+import com.integracioncomunitaria.controller.NotificationController;
 import com.integracioncomunitaria.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+
 
 public class MainCustomerMenuView extends JFrame {
     
@@ -30,6 +33,20 @@ public class MainCustomerMenuView extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(3, 2, 10, 10)); // 3 filas, 2 columnas
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Márgenes
+
+
+        // Botón: Notificaciones
+        JButton btnNotifications = createMenuButton("Notificaciones (0)", new Color(255, 99, 71));
+        btnNotifications.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new NotificationDialogCustomer(MainCustomerMenuView.this, customerId).setVisible(true);
+                int unreadCount = NotificationController.getUnreadNotificationsCount(customerId);
+                btnNotifications.setText("🔔 Notificaciones (" + unreadCount + ")");
+            }
+        });
+        
+        buttonPanel.add(btnNotifications);
 
         // Botón: Configurar Perfil
         JButton btnConfigureProfile = createMenuButton("Configurar Perfil", new Color(46, 204, 113));
@@ -58,7 +75,7 @@ public class MainCustomerMenuView extends JFrame {
         btnPublishOffers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //new OfferView(providerId).setVisible(true);
+                new PetitionView(customerId).setVisible(true);
             }
         });
         buttonPanel.add(btnPublishOffers);
@@ -68,7 +85,7 @@ public class MainCustomerMenuView extends JFrame {
         btnViewOffers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ProviderView(customerId).setVisible(true);;
+                new ProviderView(customerId).setVisible(true);
             }
         });
         buttonPanel.add(btnViewOffers);
@@ -78,8 +95,7 @@ public class MainCustomerMenuView extends JFrame {
         btnViewRequests.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Ver Ofertas");
-                // Aquí puedes redirigir a la pantalla de Ver Peticiones
+                new FilterProviderView(customerId).setVisible(true);
             }
         });
         buttonPanel.add(btnViewRequests);

@@ -1,4 +1,5 @@
 package com.integracioncomunitaria.view;
+import com.integracioncomunitaria.controller.NotificationController;
 import com.integracioncomunitaria.model.User;
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +17,8 @@ public class MainMenuView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+        
 
         // Panel de bienvenida
         JPanel welcomePanel = new JPanel();
@@ -41,6 +44,20 @@ public class MainMenuView extends JFrame {
             }
         });
         buttonPanel.add(btnCreatePortfolio);
+
+        // Botón: Notificaciones
+        JButton btnNotifications = createMenuButton("Notificaciones (0)", new Color(255, 99, 71));
+        btnNotifications.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new NotificationDialog(MainMenuView.this, providerId).setVisible(true);
+                int unreadCount = NotificationController.getUnreadNotificationsCount(providerId);
+                btnNotifications.setText("🔔 Notificaciones (" + unreadCount + ")");
+            }
+        });
+        
+        buttonPanel.add(btnNotifications);
+
 
         // Botón: Configurar Perfil
         JButton btnConfigureProfile = createMenuButton("Configurar Perfil", new Color(46, 204, 113));
@@ -100,8 +117,7 @@ public class MainMenuView extends JFrame {
         btnViewRequests.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Ver Peticiones");
-                // Aquí puedes redirigir a la pantalla de Ver Peticiones
+                new ProviderPetitionView(providerId).setVisible(true);
             }
         });
         buttonPanel.add(btnViewRequests);
@@ -127,6 +143,8 @@ public class MainMenuView extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    
+
     // Método para crear botones con un estilo uniforme
     private JButton createMenuButton(String text, Color color) {
         JButton button = new JButton(text);
@@ -137,6 +155,9 @@ public class MainMenuView extends JFrame {
         button.setPreferredSize(new Dimension(150, 50)); // Tamaño preferido
         return button;
     }
+
+   
+
 
     /*
     public static void main(String[] args) {

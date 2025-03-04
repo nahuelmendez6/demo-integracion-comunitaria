@@ -7,6 +7,7 @@ import com.integracioncomunitaria.database.ResultDataBase;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CustomerController {
@@ -39,5 +40,19 @@ public class CustomerController {
         return result;
     }
 
+    public String getCustomerName(int customerId) {
+        String query = "SELECT name FROM customer WHERE id_customer = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, customerId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    return rs.getString("name");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return "Cliente desconocido";
+    }
 
 }
