@@ -20,20 +20,36 @@ public class LoginView extends JFrame {
         setTitle("Inicio de Sesión");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 1));
+        setLocationRelativeTo(null);  // Centra la ventana en la pantalla
+        setLayout(new GridBagLayout());
 
-        JPanel panelEmail = new JPanel();
-        panelEmail.add(new JLabel("Email:"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);  // Espaciado entre componentes
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Campo Email
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
         txtEmail = new JTextField(20);
-        panelEmail.add(txtEmail);
+        txtEmail.setBorder(BorderFactory.createTitledBorder("Correo Electrónico"));
+        add(txtEmail, gbc);
 
-        JPanel panelPassword = new JPanel();
-        panelPassword.add(new JLabel("Contraseña:"));
+        // Campo Contraseña
+        gbc.gridy = 1;
         txtPassword = new JPasswordField(20);
-        panelPassword.add(txtPassword);
+        txtPassword.setBorder(BorderFactory.createTitledBorder("Contraseña"));
+        add(txtPassword, gbc);
 
+        // Botón Iniciar Sesión
+        gbc.gridy = 2;
         btnLogin = new JButton("Iniciar Sesión");
+        btnLogin.setBackground(new Color(72, 201, 176));
+        btnLogin.setForeground(Color.WHITE);
+        btnLogin.setFocusPainted(false);
+        add(btnLogin, gbc);
+
+        // Acción al presionar el botón de Login
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -41,9 +57,8 @@ public class LoginView extends JFrame {
             }
         });
 
-        add(panelEmail);
-        add(panelPassword);
-        add(btnLogin);
+        pack();  // Ajusta el tamaño de la ventana según los componentes
+        setLocationRelativeTo(null);  // Asegura que la ventana esté centrada al abrirse
     }
 
     private void login() {
@@ -76,11 +91,6 @@ public class LoginView extends JFrame {
         this.dispose();
         new MainCustomerMenuView(customerId).setVisible(true);
     }
-
-    //private void openMainCustomerView(int customerId) {
-    //    this.dispose();
-    //    new MainCustomerView(customerId).setVisible(true);
-    //}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginView().setVisible(true));

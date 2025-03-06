@@ -53,22 +53,10 @@ public class MainCustomerMenuView extends JFrame {
         btnConfigureProfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Configurar Perfil");
-                // Aquí puedes redirigir a la pantalla de Configuración de Perfil
+                new CustomerProfileView(customerId);
             }
         });
         buttonPanel.add(btnConfigureProfile);
-
-        // Botón: Gestionar Dirección
-        JButton btnManageAddress = createMenuButton("Gestionar Dirección", new Color(155, 89, 182));
-        btnManageAddress.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Gestionar Dirección");
-                // Aquí puedes redirigir a la pantalla de Gestión de Dirección
-            }
-        });
-        buttonPanel.add(btnManageAddress);
 
         // Botón: Publicar Ofertas
         JButton btnPublishOffers = createMenuButton("Publicar Petición", new Color(241, 196, 15));
@@ -79,6 +67,26 @@ public class MainCustomerMenuView extends JFrame {
             }
         });
         buttonPanel.add(btnPublishOffers);
+
+        // Boton: Ver postulaciones
+        JButton btnViewPostulations = createMenuButton("Ver postulaciones", new Color(240, 190, 10));
+        btnViewPostulations.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CustomerPostulationView(customerId).setVisible(true);
+            }
+        });
+        buttonPanel.add(btnViewPostulations);
+
+        // Boton: Ver estado de postulaciones
+        JButton btnPostulationState = createMenuButton("Ver estado de postulaciones", new Color(235, 185, 5));
+        btnPostulationState.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PostulationView(customerId).setVisible(true);
+            }
+        });
+        buttonPanel.add(btnPostulationState);
 
         // Botón: Ver Ofertas
         JButton btnViewOffers = createMenuButton("Ver Ofertas", new Color(230, 126, 34));
