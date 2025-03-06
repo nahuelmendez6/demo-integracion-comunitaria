@@ -76,5 +76,47 @@ public class AvailabilityController {
             e.printStackTrace();
             return false;
         }
+
+
     }
+
+    public String getProviderAvailability(int providerId) {
+        String query = """
+            SELECT w.name AS day, h.name AS from_hour, h2.name AS until_hour
+            FROM availability a
+            JOIN week w ON a.id_week = w.id_week
+            JOIN hour h ON a.id_from_hour = h.id_hour
+            JOIN hour h2 ON a.id_until_hour = h2.id_hour
+            WHERE a.id_provider = ?
+            ORDER BY w.id_week, h.id_hour
+        """;
+        
+        StringBuilder result = new StringBuilder("Disponibilidad:\n");
+        Map<String, StringBuilder> schedule = new HashMap<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, providerId);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                String day = rs.getString("day");
+                String fromHour = rs.getString("from_hour");
+                String untilHour = rs.getString("until_hour");
+                
+                schedule.putIfAbsent(day, new StringBuilder());
+                schedule.get(day).append(fromHour).append(" - ").append(untilHour).append("\n");
+            }
+            
+            schedule.forEach((day, hours) -> {
+                result.append(day).append(":\n").append(hours).append("\n");
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error al obtener la disponibilidad.";
+        }
+        
+        return result.toString();
+    }
+
 }

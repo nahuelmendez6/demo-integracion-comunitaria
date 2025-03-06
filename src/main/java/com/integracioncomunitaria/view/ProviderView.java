@@ -53,7 +53,7 @@ public class ProviderView extends JFrame {
         String[] columnNames = {"Nombre", "Categoría", "Profesión"};
         Object[][] data = {
             {provider[1], provider[2], provider[3]},  // Primera fila: datos
-            {"", "", ""}  // Segunda fila: botones
+            
         };
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
@@ -71,16 +71,22 @@ public class ProviderView extends JFrame {
         JButton offersButton = new JButton("Ver Ofertas");
         JButton portfolioButton = new JButton("Ver Portfolio");
         JButton contactButton = new JButton("Contactar");
+        JButton gradeButton = new JButton("Ver calificación");
+        JButton availavilityButton = new JButton("Disponibilidad");
 
         int providerId = Integer.parseInt(provider[0]);
 
         offersButton.addActionListener(e -> showOffers(providerId));
         portfolioButton.addActionListener(e -> showPortfolio(providerId));
         contactButton.addActionListener(e -> contactProvider(providerId));
+        gradeButton.addActionListener(e -> showGradeProvider(providerId));
+        availavilityButton.addActionListener(e -> showAvailability(providerId));
 
         buttonPanel.add(offersButton);
         buttonPanel.add(portfolioButton);
         buttonPanel.add(contactButton);
+        buttonPanel.add(gradeButton);
+        buttonPanel.add(availavilityButton);
         providerPanel.add(buttonPanel, BorderLayout.CENTER);
 
         return providerPanel;
@@ -107,71 +113,81 @@ public class ProviderView extends JFrame {
 }
 
 
-private void showPortfolio(int providerId) {
-    List<Map<String, Object>> portfolios = portfolioController.getPortfoliosByProvider(providerId);
+    private void showPortfolio(int providerId) {
+            List<Map<String, Object>> portfolios = portfolioController.getPortfoliosByProvider(providerId);
 
-    if (portfolios.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No hay portfolios disponibles para este proveedor.", "Portfolio del Proveedor", JOptionPane.INFORMATION_MESSAGE);
-        return;
-    }
-
-    // Crear ventana para mostrar los portfolios
-    JDialog portfolioDialog = new JDialog(this, "Portfolio del Proveedor", true);
-    portfolioDialog.setSize(700, 500);
-    portfolioDialog.setLayout(new BorderLayout());
-
-    JPanel mainPanel = new JPanel();
-    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
-    for (Map<String, Object> portfolio : portfolios) {
-        JPanel portfolioPanel = new JPanel(new BorderLayout());
-        portfolioPanel.setBorder(BorderFactory.createTitledBorder("📂 " + portfolio.get("name")));
-
-        JTextArea descriptionArea = new JTextArea("Fecha de creación: " + portfolio.get("date_create") + "\n" +
-                                                  "Descripción: " + portfolio.get("description"));
-        descriptionArea.setEditable(false);
-        portfolioPanel.add(descriptionArea, BorderLayout.NORTH);
-
-        List<Map<String, Object>> attachments = portfolioController.getAttachmentsByPortfolio((int) portfolio.get("id_portfolio"));
-
-        if (!attachments.isEmpty()) {
-            String[] columnNames = {"Nombre del Archivo", "Ruta", "Abrir"};
-            Object[][] data = new Object[attachments.size()][3];
-
-            for (int i = 0; i < attachments.size(); i++) {
-                data[i][0] = attachments.get(i).get("name");
-                data[i][1] = attachments.get(i).get("path");
-                data[i][2] = "Abrir";
+            if (portfolios.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hay portfolios disponibles para este proveedor.", "Portfolio del Proveedor", JOptionPane.INFORMATION_MESSAGE);
+                return;
             }
 
-            DefaultTableModel model = new DefaultTableModel(data, columnNames) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return column == 2; // Solo permitir interacción en la columna "Abrir"
+            // Crear ventana para mostrar los portfolios
+            JDialog portfolioDialog = new JDialog(this, "Portfolio del Proveedor", true);
+            portfolioDialog.setSize(700, 500);
+            portfolioDialog.setLayout(new BorderLayout());
+
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+            for (Map<String, Object> portfolio : portfolios) {
+                JPanel portfolioPanel = new JPanel(new BorderLayout());
+                portfolioPanel.setBorder(BorderFactory.createTitledBorder("📂 " + portfolio.get("name")));
+
+                JTextArea descriptionArea = new JTextArea("Fecha de creación: " + portfolio.get("date_create") + "\n" +
+                                                        "Descripción: " + portfolio.get("description"));
+                descriptionArea.setEditable(false);
+                portfolioPanel.add(descriptionArea, BorderLayout.NORTH);
+
+                List<Map<String, Object>> attachments = portfolioController.getAttachmentsByPortfolio((int) portfolio.get("id_portfolio"));
+
+                if (!attachments.isEmpty()) {
+                    String[] columnNames = {"Nombre del Archivo", "Ruta", "Abrir"};
+                    Object[][] data = new Object[attachments.size()][3];
+
+                    for (int i = 0; i < attachments.size(); i++) {
+                        data[i][0] = attachments.get(i).get("name");
+                        data[i][1] = attachments.get(i).get("path");
+                        data[i][2] = "Abrir";
+                    }
+
+                    DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                            return column == 2; // Solo permitir interacción en la columna "Abrir"
+                        }
+                    };
+
+                    JTable attachmentTable = new JTable(model);
+                    attachmentTable.getColumn("Abrir").setCellRenderer(new ButtonRenderer());
+                    attachmentTable.getColumn("Abrir").setCellEditor(new ImageViewerButtonEditor(new JCheckBox(), attachments));
+
+                    portfolioPanel.add(new JScrollPane(attachmentTable), BorderLayout.CENTER);
+                } else {
+                    portfolioPanel.add(new JLabel("📎 No hay archivos adjuntos."), BorderLayout.CENTER);
                 }
-            };
 
-            JTable attachmentTable = new JTable(model);
-            attachmentTable.getColumn("Abrir").setCellRenderer(new ButtonRenderer());
-            attachmentTable.getColumn("Abrir").setCellEditor(new ImageViewerButtonEditor(new JCheckBox(), attachments));
-
-            portfolioPanel.add(new JScrollPane(attachmentTable), BorderLayout.CENTER);
-        } else {
-            portfolioPanel.add(new JLabel("📎 No hay archivos adjuntos."), BorderLayout.CENTER);
+                mainPanel.add(portfolioPanel);
         }
 
-        mainPanel.add(portfolioPanel);
+        portfolioDialog.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
+        portfolioDialog.setVisible(true);
     }
-
-    portfolioDialog.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
-    portfolioDialog.setVisible(true);
-}
 
 
 
 
     private void contactProvider(int providerId) {
         ContactProviderDialog dialog = new ContactProviderDialog(this, providerId, customerId);
+        dialog.setVisible(true);
+    }
+
+    private void showGradeProvider(int providerId) {
+        ProviderRatingDialog dialog = new ProviderRatingDialog(this, providerId);
+        dialog.setVisible(true);
+    }
+
+    private void showAvailability(int providerId) {
+        ProviderAvailabilityView dialog = new ProviderAvailabilityView(this, providerId);
         dialog.setVisible(true);
     }
 

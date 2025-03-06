@@ -70,6 +70,8 @@ public class ProviderController {
                         String.valueOf(rs.getInt("id_category")),
                         String.valueOf(rs.getInt("id_profession")),
                         String.valueOf(rs.getInt("id_type_provider"))
+
+                        
                 };
                 providers.add(provider);
             }
@@ -92,6 +94,21 @@ public class ProviderController {
             e.printStackTrace();
         }
         return "Proveedor desconocido";
+    }
+
+    public Integer getProviderIdByName(String name) {
+        String query = "SELECT id_provider FROM provider WHERE name = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public List<String> getCategories() {
@@ -162,5 +179,44 @@ public class ProviderController {
 
         return providers;
     }
+
+    public boolean submitRating(int providerId, int rating, String comment, int userId) {
+        String query = "INSERT INTO grade_provider (id_provider, id_grade, coment, id_user_create, id_user_update) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, providerId);
+            stmt.setInt(2, rating);
+            stmt.setString(3, comment);
+            stmt.setInt(4, userId);
+            stmt.setInt(5, userId);
+            
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+     // Método para obtener el promedio de puntuaciones de un proveedor
+     public double getProviderAverageRating(int providerId) {
+        String query = "SELECT AVG(id_grade) AS average FROM grade_provider WHERE id_provider = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, providerId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("average");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0; // Si hay un error o no hay calificaciones, retorna 0
+    }
+
+
+
 }
 

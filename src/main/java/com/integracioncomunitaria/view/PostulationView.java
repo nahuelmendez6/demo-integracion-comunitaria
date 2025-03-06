@@ -8,16 +8,19 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import com.integracioncomunitaria.controller.PostulationController;
+import com.integracioncomunitaria.controller.ProviderController;
 
 public class PostulationView extends JFrame {
     private JTable approvedTable, canceledTable, finishedTable;
     private DefaultTableModel approvedModel, canceledModel, finishedModel;
     private int customerId;
     private PostulationController postulationController;
+    private ProviderController providerController;
 
     public PostulationView(int customerId) {
         this.customerId = customerId;
         this.postulationController = new PostulationController();
+        this.providerController = new ProviderController();
         setTitle("Postulaciones del Cliente");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -76,7 +79,7 @@ public class PostulationView extends JFrame {
             String proposal = post[3];
             String cost = post[4];
             String state = post[5];
-            
+
             if (state.equalsIgnoreCase("Aceptado")) {
                 approvedModel.addRow(new Object[]{id, provider, proposal, cost, state});
             } else if (state.equalsIgnoreCase("Rechazado")) {
@@ -89,7 +92,7 @@ public class PostulationView extends JFrame {
                 finishedModel.addRow(new Object[]{id, provider, proposal, cost, state});
             } else if (state.equalsIgnoreCase("Cancelada")) {
                 finishedModel.addRow(new Object[]{id, provider, proposal, cost, state});
-            } else if (state.equalsIgnoreCase("Terminada con éxto")) {
+            } else if (state.equalsIgnoreCase("Terminada con éxito")) {
                 finishedModel.addRow(new Object[]{id, provider, proposal, cost, state});
             }
         }
@@ -99,7 +102,9 @@ public class PostulationView extends JFrame {
         int selectedRow = approvedTable.getSelectedRow();
         if (selectedRow != -1) {
             String postulationId = (String) approvedModel.getValueAt(selectedRow, 0);
-            // Aquí iría la lógica para actualizar el estado de la postulación en la base de datos
+            int idpostulation = Integer.parseInt(postulationId);
+            int id_petition = postulationController.getIdPetitionByPostulation(idpostulation);
+            postulationController.finishPostulation(idpostulation, id_petition);
             JOptionPane.showMessageDialog(this, "Postulación finalizada con éxito.");
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione una postulación para finalizar.");
@@ -109,10 +114,11 @@ public class PostulationView extends JFrame {
     private void rateProvider() {
         int selectedRow = finishedTable.getSelectedRow();
         if (selectedRow != -1) {
+            String idprovider =  (String) finishedModel.getValueAt(selectedRow, 0);// Asume que la primera columna tiene el id_provider
             String providerName = (String) finishedModel.getValueAt(selectedRow, 1);
-            String rating = JOptionPane.showInputDialog("Ingrese una calificación para " + providerName + " (1-5):");
-            // Aquí iría la lógica para guardar la calificación en la base de datos
-            JOptionPane.showMessageDialog(this, "Calificación registrada.");
+            int providerId = Integer.parseInt(idprovider);
+            ProviderController providerController = new ProviderController();
+            new RateProviderDialog(this, providerId, customerId, providerController).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un proveedor para puntuar.");
         }

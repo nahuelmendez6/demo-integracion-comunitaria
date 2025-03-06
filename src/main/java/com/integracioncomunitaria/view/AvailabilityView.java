@@ -15,10 +15,10 @@ public class AvailabilityView extends JFrame {
     private AvailabilityController controller;
     private ProfileController profileController;
     private JPanel mainPanel;
-    private Map<Integer, List<JCheckBox>> checkboxesByDay; // Mapea días con sus checkboxes de horas
-    private Map<Integer, String> dayNames; // Mapea ID de días con sus nombres
+    private Map<Integer, List<JCheckBox>> checkboxesByDay;
+    private Map<Integer, String> dayNames;
 
-    private int providerId; // ID del proveedor que inicia sesión
+    private int providerId;
 
     public AvailabilityView(int providerId) {
         this.providerId = providerId;
@@ -27,15 +27,14 @@ public class AvailabilityView extends JFrame {
         this.dayNames = new HashMap<>();
 
         setTitle("Seleccionar Disponibilidad");
-        setSize(500, 600);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(0, 1));
-
-        loadDaysAndHours(); // Cargar la información de la BD
+        mainPanel.setLayout(new GridLayout(0, 7, 5, 5));
+        loadDaysAndHours();
 
         JButton saveButton = new JButton("Guardar Disponibilidad");
         saveButton.addActionListener(new ActionListener() {
@@ -53,18 +52,17 @@ public class AvailabilityView extends JFrame {
     private void loadDaysAndHours() {
         List<Map<String, Object>> days = controller.getWeekDays();
 
+        JPanel containerPanel = new JPanel(new GridLayout(0, days.size(), 10, 10));
         for (Map<String, Object> day : days) {
             int dayId = (int) day.get("id_week");
             String dayName = (String) day.get("name");
             dayNames.put(dayId, dayName);
 
-            JPanel dayPanel = new JPanel();
-            dayPanel.setLayout(new BorderLayout());
+            JPanel dayPanel = new JPanel(new BorderLayout());
             dayPanel.setBorder(BorderFactory.createTitledBorder(dayName));
+            dayPanel.setBackground(Color.LIGHT_GRAY);
 
-            JPanel hourPanel = new JPanel();
-            hourPanel.setLayout(new GridLayout(0, 2));
-
+            JPanel hourPanel = new JPanel(new GridLayout(0, 1));
             List<JCheckBox> hourCheckboxes = new ArrayList<>();
             List<Map<String, Object>> hours = controller.getHoursByDay(dayId);
 
@@ -79,11 +77,11 @@ public class AvailabilityView extends JFrame {
             }
 
             checkboxesByDay.put(dayId, hourCheckboxes);
-
             dayPanel.add(hourPanel, BorderLayout.CENTER);
-            mainPanel.add(dayPanel);
+            containerPanel.add(dayPanel);
         }
 
+        mainPanel.add(containerPanel);
         revalidate();
         repaint();
     }
@@ -117,18 +115,12 @@ public class AvailabilityView extends JFrame {
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Disponibilidad guardada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        
-            //int idProvider = profileController.getProviderIdByUserId(userId);
-
             SwingUtilities.invokeLater(() -> {
                 new AddressSetupView(providerId).setVisible(true);
-                dispose(); // Cierra la ventana actual
+                dispose();
             });
-        
         } else {
             JOptionPane.showMessageDialog(this, "Error al guardar la disponibilidad.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
 }

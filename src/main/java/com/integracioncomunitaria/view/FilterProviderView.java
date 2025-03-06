@@ -87,7 +87,7 @@ public class FilterProviderView extends JFrame {
         providerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         String[] columnNames = {"Nombre", "Categoría", "Profesión"};
-        Object[][] data = {{provider[1], provider[2], provider[3]}, {"", "", ""}};
+        Object[][] data = {{provider[1], provider[2], provider[3]}};
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         JTable providerTable = new JTable(tableModel) {
             @Override

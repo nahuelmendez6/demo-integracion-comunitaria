@@ -104,6 +104,23 @@ public class PostulationController {
     
         return postulations;
     }
+
+    public Integer getIdPetitionByPostulation(int postulationId) {
+        String query = "SELECT id_petition FROM postulation WHERE idpostulation = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, postulationId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt("id_petition");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return -1;
+
+    }
     
     public boolean finishPostulation(int postulationId, int petitionId) {
         String query = """
