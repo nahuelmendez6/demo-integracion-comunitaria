@@ -72,10 +72,10 @@ public class MainMenuView extends JFrame {
 
         // botón: Gestionar inventario
         JButton btnInventory = createMenuButton("Gestionar inventario", new Color(50, 202, 110));
-        btnConfigureProfile.addActionListener(new ActionListener() {
+        btnInventory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new InventoryView(providerId).setVisible(true);
+                new ProviderInventoryView(providerId).setVisible(true);
             }
             });
         buttonPanel.add(btnInventory);
@@ -135,6 +135,7 @@ public class MainMenuView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Sesión cerrada");
+                new LoginView().setVisible(true);
                 dispose(); // Cierra la ventana actual
                // new LoginView().setVisible(true); // Redirige a la pantalla de login
             }

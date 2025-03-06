@@ -1,62 +1,79 @@
 package com.integracioncomunitaria.controller;
 
-import com.integracioncomunitaria.database.DatabaseConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import com.integracioncomunitaria.database.DatabaseConnection;
+
+import com.integracioncomunitaria.model.Inventory;
 
 public class InventoryController {
+    private Connection connection;
 
-    // Método para agregar un artículo al inventario
-    public boolean addInventoryItem(int providerId, int articleId, int quantity, double cost, int userId) {
-        String query = "INSERT INTO inventory (id_provider, id_article, quantity, cost, id_user_create, id_user_update, date_create, date_update) " +
-                       "VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, providerId);
-            stmt.setInt(2, articleId);
-            stmt.setInt(3, quantity);
-            stmt.setDouble(4, cost);
-            stmt.setInt(5, userId);
-            stmt.setInt(6, userId);
-
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public InventoryController() {
+        this.connection = DatabaseConnection.getConnection();
     }
 
-    // Método para obtener el inventario de un proveedor
-    public List<Map<String, Object>> getInventoryByProvider(int providerId) {
-        List<Map<String, Object>> inventoryList = new ArrayList<>();
-        String query = "SELECT i.id_inventory, a.name AS article_name, i.quantity, i.cost " +
-                       "FROM inventory i " +
-                       "JOIN article a ON i.id_article = a.id_article " +
-                       "WHERE i.id_provider = ?";
+    // Método para agregar un nuevo artículo a la tabla `article`
+    public int addArticle(String name, int categoryId, int userId) {
+        String sql = "INSERT INTO article (name, id_category, id_user_create, id_user_update) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, name);
+            stmt.setInt(2, categoryId);
+            stmt.setInt(3, userId);
+            stmt.setInt(4, userId);
+            stmt.executeUpdate();
+            
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1); // Retorna el ID del artículo creado
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+    // Método modificado para agregar productos al inventario
+    public boolean addProductToInventory(int providerId, String articleName, int categoryId, int quantity, double cost, int userId) {
+        int articleId = addArticle(articleName, categoryId, userId);
+        if (articleId == -1) {
+            return false;
+        }
+        
+        String sql = "INSERT INTO inventory (id_article, quantity, cost, id_user_create, id_user_update) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, articleId);
+            stmt.setInt(2, quantity);
+            stmt.setDouble(3, cost);
+            stmt.setInt(4, userId);
+            stmt.setInt(5, userId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
+    // Método para obtener los productos del inventario con el nombre del artículo
+    public List<Inventory> getInventoryByProvider(int providerId) {
+        List<Inventory> inventoryList = new ArrayList<>();
+        String sql = "SELECT i.id_inventory, a.name AS article, i.quantity, i.cost " +
+                     "FROM inventory i JOIN article a ON i.id_article = a.id_article " +
+                     "WHERE i.id_user_create = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, providerId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
-                Map<String, Object> item = new HashMap<>();
-                item.put("id_inventory", rs.getInt("id_inventory"));
-                item.put("article_name", rs.getString("article_name"));
-                item.put("quantity", rs.getInt("quantity"));
-                item.put("cost", rs.getDouble("cost"));
+                Inventory item = new Inventory(
+                    rs.getInt("id_inventory"),
+                    rs.getString("article"), 
+                    rs.getInt("quantity"), 
+                    rs.getBigDecimal("cost")
+                );
                 inventoryList.add(item);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

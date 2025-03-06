@@ -121,6 +121,7 @@ public class MainCustomerMenuView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Sesión cerrada");
+                new LoginView().setVisible(true);
                 dispose(); // Cierra la ventana actual
                // new LoginView().setVisible(true); // Redirige a la pantalla de login
             }

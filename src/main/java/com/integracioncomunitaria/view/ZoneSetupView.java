@@ -154,7 +154,7 @@ public class ZoneSetupView extends JFrame {
         JOptionPane.showMessageDialog(this, result.getMessage(), "Información", JOptionPane.INFORMATION_MESSAGE);
 
         if (result.getSuccess()) {
-            new MainCustomerMenuView(providerId).setVisible(true);
+            new MainMenuView(providerId).setVisible(true);
             dispose();
         }
     }
