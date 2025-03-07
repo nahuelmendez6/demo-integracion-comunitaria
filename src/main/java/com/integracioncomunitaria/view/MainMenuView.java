@@ -84,8 +84,7 @@ public class MainMenuView extends JFrame {
         btnManageAddress.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Gestionar Dirección");
-                // Aquí puedes redirigir a la pantalla de Gestión de Dirección
+                new ProviderAddressView(providerId).setVisible(true);
             }
         });
         buttonPanel.add(btnManageAddress);

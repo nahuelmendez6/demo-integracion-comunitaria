@@ -59,7 +59,7 @@ public class MainCustomerMenuView extends JFrame {
         buttonPanel.add(btnConfigureProfile);
 
         // Botón: Configurar Perfil
-        JButton btnConfigureAddress = createMenuButton("Configurar Direccion", new Color(40, 200, 100));
+        JButton btnConfigureAddress = createMenuButton("Direccion", new Color(40, 200, 100));
         btnConfigureAddress.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

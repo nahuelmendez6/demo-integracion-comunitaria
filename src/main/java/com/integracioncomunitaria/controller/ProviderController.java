@@ -372,6 +372,79 @@ public class ProviderController {
             return false;
         }
     }
+
+    public List<String[]> getProviderAddress(int id_provider) {
+        List<String[]> customerAddress = new ArrayList<>();
+
+        String query = """
+                SELECT pro.id_provider, pro.name, a.id_province, a.id_departament, a.id_city, 
+                       a.street, a.number_str, a.dpto, a.floor_dpto,
+                       p.name AS province, d.name_departament AS departament, ci.name AS city
+                FROM provider pro
+                JOIN customer_address a ON pro.id_provider = a.id_customer
+                JOIN province p ON a.id_province = p.id_province
+                JOIN departament d ON a.id_departament = d.id_departament
+                JOIN city ci ON a.id_city = ci.id_city
+                WHERE pro.id_provider = ?
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+            stmt.setInt(1, id_provider);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                customerAddress.add(new String[]{
+                    String.valueOf(rs.getInt("id_provider")),
+                    rs.getString("name"),
+                    rs.getString("province"),
+                    rs.getString("departament"),
+                    rs.getString("city"),
+                    rs.getString("street"),
+                    rs.getString("number_str"),
+                    rs.getString("dpto"),
+                    rs.getString("floor_dpto")
+                });
+            }
+            System.out.println(customerAddress);
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customerAddress;
+    }
+
+    public boolean updateProviderAddress(int id_provider, String province, String departament, String city, String street, String number, String dpto, String floor) {
+        String query = """
+                UPDATE provider_address 
+                SET id_province = (SELECT id_province FROM province WHERE name = ?),
+                    id_departament = (SELECT id_departament FROM departament WHERE name_departament = ?),
+                    id_city = (SELECT id_city FROM city WHERE name = ?),
+                    street = ?, number_str = ?, dpto = ?, floor_dpto = ?
+                WHERE id_provider = ?
+                """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+            stmt.setString(1, province);
+            stmt.setString(2, departament);
+            stmt.setString(3, city);
+            stmt.setString(4, street);
+            stmt.setString(5, number);
+            stmt.setString(6, dpto);
+            stmt.setString(7, floor);
+            stmt.setInt(8, id_provider);
+    
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
 
 
