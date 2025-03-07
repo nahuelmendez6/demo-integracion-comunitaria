@@ -64,8 +64,7 @@ public class MainMenuView extends JFrame {
         btnConfigureProfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Acceso a Configurar Perfil");
-                // Aquí puedes redirigir a la pantalla de Configuración de Perfil
+                new ProviderProfileView(providerId).setVisible(true);
             }
         });
         buttonPanel.add(btnConfigureProfile);

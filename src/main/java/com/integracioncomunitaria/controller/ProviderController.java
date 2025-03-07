@@ -216,6 +216,158 @@ public class ProviderController {
         return 0.0; // Si hay un error o no hay calificaciones, retorna 0
     }
 
+    public List<String[]> getAllProviders() {
+        List<String[]> providers = new ArrayList<>();
+        String query = """
+            SELECT p.id_provider, p.name, c.name AS category, pr.name AS profession
+            FROM provider p
+            JOIN category c ON p.id_category = c.id_category
+            JOIN profession pr ON p.id_profession = pr.id_profession
+        """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+    
+            while (rs.next()) {
+                providers.add(new String[]{
+                        String.valueOf(rs.getInt("id_provider")),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getString("profession")
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return providers;
+    }
+    
+    public List<String[]> getProvidersByCategory(String category) {
+        List<String[]> providers = new ArrayList<>();
+        String query = """
+            SELECT p.id_provider, p.name, c.name AS category, pr.name AS profession
+            FROM provider p
+            JOIN category c ON p.id_category = c.id_category
+            JOIN profession pr ON p.id_profession = pr.id_profession
+            WHERE c.name = ?
+        """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setString(1, category);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                providers.add(new String[]{
+                        String.valueOf(rs.getInt("id_provider")),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getString("profession")
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return providers;
+    }
+
+    public List<String[]> getProviderData(int id_provider) {
+        List<String[]> providerData = new ArrayList<>();
+    
+        String query = """
+            SELECT p.id_user, p.id_category, p.id_profession, u.name, u.last_name, u.email,c.name AS category, pr.name AS profession
+            FROM provider p
+            JOIN user u ON p.id_user = u.id_user
+            JOIN category c ON p.id_category = c.id_category
+            JOIN profession pr ON p.id_profession = pr.id_profession
+            WHERE p.id_provider = ?
+        """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, id_provider);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                providerData.add(new String[]{
+                    String.valueOf(rs.getInt("id_user")),
+                    rs.getString("name"),
+                    rs.getString("last_name"),
+                    rs.getString("email"),
+                    rs.getString("category"),
+                    rs.getString("profession")
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return providerData;
+    }
+    
+    
+    public List<String[]> getProvidersByProfession(String profession) {
+        List<String[]> providers = new ArrayList<>();
+        String query = """
+            SELECT p.id_provider, p.name, c.name AS category, pr.name AS profession
+            FROM provider p
+            JOIN category c ON p.id_category = c.id_category
+            JOIN profession pr ON p.id_profession = pr.id_profession
+            WHERE pr.name = ?
+        """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setString(1, profession);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                providers.add(new String[]{
+                        String.valueOf(rs.getInt("id_provider")),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getString("profession")
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return providers;
+    }
+
+    public boolean updateProviderProfile(int providerId, String name, String lastName, String email, int categoryId, int professionId) {
+        String query = """
+            UPDATE provider p
+            JOIN user u ON p.id_user = u.id_user
+            SET u.name = ?, u.last_name = ?, u.email = ?, p.id_category = ?, p.id_profession = ?
+            WHERE p.id_provider = ?
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, name);
+            stmt.setString(2, lastName);
+            stmt.setString(3, email);
+            stmt.setInt(4, categoryId);
+            stmt.setInt(5, professionId);
+            stmt.setInt(6, providerId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 
 
 }

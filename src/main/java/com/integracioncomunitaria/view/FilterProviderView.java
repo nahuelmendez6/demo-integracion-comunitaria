@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +36,15 @@ public class FilterProviderView extends JFrame {
 
         categoryComboBox = new JComboBox<>(providerController.getCategories().toArray(new String[0]));
         professionComboBox = new JComboBox<>(providerController.getProfessions().toArray(new String[0]));
-        JButton filterButton = new JButton("Filtrar");
+        JButton filterCategoryButton = new JButton("Filtrar por Categoría");
+        JButton filterProfessionButton = new JButton("Filtrar por Profesión");
 
         filterPanel.add(new JLabel("Categoría:"));
         filterPanel.add(categoryComboBox);
+        filterPanel.add(filterCategoryButton);
         filterPanel.add(new JLabel("Profesión:"));
         filterPanel.add(professionComboBox);
-        filterPanel.add(filterButton);
+        filterPanel.add(filterProfessionButton);
 
         add(filterPanel, BorderLayout.NORTH);
 
@@ -51,22 +52,33 @@ public class FilterProviderView extends JFrame {
         providerPanel.setLayout(new BoxLayout(providerPanel, BoxLayout.Y_AXIS));
         add(new JScrollPane(providerPanel), BorderLayout.CENTER);
 
-        filterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadProviders();
-            }
-        });
+        filterCategoryButton.addActionListener(e -> loadProvidersByCategory());
+        filterProfessionButton.addActionListener(e -> loadProvidersByProfession());
 
         loadProviders();
     }
 
     private void loadProviders() {
         providerPanel.removeAll();
-        String selectedCategory = (String) categoryComboBox.getSelectedItem();
-        String selectedProfession = (String) professionComboBox.getSelectedItem();
+        List<String[]> providers = providerController.getAllProviders();
+        displayProviders(providers);
+    }
 
-        List<String[]> providers = providerController.getCateogryFilteredProviders(selectedCategory, selectedProfession);
+    private void loadProvidersByCategory() {
+        providerPanel.removeAll();
+        String selectedCategory = (String) categoryComboBox.getSelectedItem();
+        List<String[]> providers = providerController.getProvidersByCategory(selectedCategory);
+        displayProviders(providers);
+    }
+
+    private void loadProvidersByProfession() {
+        providerPanel.removeAll();
+        String selectedProfession = (String) professionComboBox.getSelectedItem();
+        List<String[]> providers = providerController.getProvidersByProfession(selectedProfession);
+        displayProviders(providers);
+    }
+
+    private void displayProviders(List<String[]> providers) {
         if (providers.isEmpty()) {
             providerPanel.add(new JLabel("No se encontraron proveedores disponibles."));
         } else {
@@ -74,7 +86,6 @@ public class FilterProviderView extends JFrame {
                 providerPanel.add(createProviderPanel(provider));
             }
         }
-
         providerPanel.revalidate();
         providerPanel.repaint();
     }
@@ -83,8 +94,6 @@ public class FilterProviderView extends JFrame {
         JPanel providerPanel = new JPanel(new BorderLayout());
         providerPanel.setBorder(BorderFactory.createTitledBorder(provider[1]));
         providerPanel.setBackground(Color.LIGHT_GRAY);
-        providerPanel.setOpaque(true);
-        providerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         String[] columnNames = {"Nombre", "Categoría", "Profesión"};
         Object[][] data = {{provider[1], provider[2], provider[3]}};
@@ -102,18 +111,17 @@ public class FilterProviderView extends JFrame {
         JButton offersButton = new JButton("Ver Ofertas");
         JButton portfolioButton = new JButton("Ver Portfolio");
         JButton contactButton = new JButton("Contactar");
-        
+
         int providerId = Integer.parseInt(provider[0]);
-        
         offersButton.addActionListener(e -> showOffers(providerId));
         portfolioButton.addActionListener(e -> showPortfolio(providerId));
         contactButton.addActionListener(e -> contactProvider(providerId));
-        
+
         buttonPanel.add(offersButton);
         buttonPanel.add(portfolioButton);
         buttonPanel.add(contactButton);
         providerPanel.add(buttonPanel, BorderLayout.CENTER);
-        
+
         return providerPanel;
     }
 
@@ -138,17 +146,11 @@ public class FilterProviderView extends JFrame {
         List<Map<String, Object>> portfolios = portfolioController.getPortfoliosByProvider(providerId);
         if (portfolios.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay portfolios disponibles para este proveedor.", "Portfolio del Proveedor", JOptionPane.INFORMATION_MESSAGE);
-            return;
         }
-        // Aquí se implementaría la visualización de portfolios
     }
 
     private void contactProvider(int providerId) {
         ContactProviderDialog dialog = new ContactProviderDialog(this, providerId, customerId);
         dialog.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ProviderView(1).setVisible(true));
     }
 }
