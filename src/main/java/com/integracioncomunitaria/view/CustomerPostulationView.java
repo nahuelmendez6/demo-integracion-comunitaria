@@ -29,15 +29,21 @@ public class CustomerPostulationView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(postulationTable);
         add(scrollPane, BorderLayout.CENTER);
 
+        // Panel para los botones
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        
         // Botón para aceptar postulación
         JButton acceptButton = new JButton("Aceptar Postulación");
         acceptButton.addActionListener(e -> acceptPostulation());
-        add(acceptButton, BorderLayout.NORTH);
+        buttonPanel.add(acceptButton);
 
-        // Boton para cancelar postulacion
-        JButton cancelButton = new JButton("Cancelar postulación");
+        // Botón para cancelar postulación
+        JButton cancelButton = new JButton("Cancelar Postulación");
         cancelButton.addActionListener(e -> cancelPostulation());
-        add(cancelButton, BorderLayout.SOUTH);
+        buttonPanel.add(cancelButton);
+
+        // Agregar el panel de botones al sur
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private void acceptPostulation() {
@@ -60,7 +66,7 @@ public class CustomerPostulationView extends JFrame {
         }
     }
 
-    public void cancelPostulation() {
+    private void cancelPostulation() {
         int selectedRow = postulationTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Seleccione una postulación", "Error", JOptionPane.ERROR_MESSAGE);
@@ -73,12 +79,17 @@ public class CustomerPostulationView extends JFrame {
         boolean success = postulationController.cancelPostulation(postulationId, petitionId);
 
         if (success) {
-            JOptionPane.showMessageDialog(this, "Postulación aceptada con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            dispose();  // Cerrar la ventana después de aceptar
+            JOptionPane.showMessageDialog(this, "Postulación cancelada con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            dispose();  // Cerrar la ventana después de cancelar
         } else {
-            JOptionPane.showMessageDialog(this, "Error al aceptar la postulación", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al cancelar la postulación", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new CustomerPostulationView(1).setVisible(true));
+    }
+
 
     public void finishPostulation() {
         int selectedRow = postulationTable.getSelectedRow();
@@ -100,7 +111,5 @@ public class CustomerPostulationView extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new CustomerPostulationView(1).setVisible(true));
-    }
+
 }

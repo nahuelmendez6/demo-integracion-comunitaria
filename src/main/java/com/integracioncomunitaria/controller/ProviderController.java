@@ -47,9 +47,10 @@ public class ProviderController {
         List<String[]> providers = new ArrayList<>();
 
         String query = """
-            SELECT DISTINCT p.id_provider, p.name, p.id_category, p.id_profession, p.id_type_provider
+            SELECT DISTINCT p.id_provider, p.name, p.id_category, p.id_profession, p.id_type_provider, pc.name AS category, pr.name AS profession
             FROM provider p
             JOIN category pc ON p.id_category = pc.id_category
+            JOIN profession pr ON p.id_profession = pr.id_profession
             JOIN interest i ON i.id_category = pc.id_category
             JOIN customer_address ca ON ca.id_customer = i.id_customer
             JOIN provider_zone pz ON pz.id_provider = p.id_provider
@@ -67,8 +68,10 @@ public class ProviderController {
                 String[] provider = {
                         String.valueOf(rs.getInt("id_provider")),
                         rs.getString("name"),
-                        String.valueOf(rs.getInt("id_category")),
-                        String.valueOf(rs.getInt("id_profession")),
+                        rs.getString("category"),
+                        rs.getString("profession"),
+                        //String.valueOf(rs.getInt("id_category")),
+                        //String.valueOf(rs.getInt("id_profession")),
                         String.valueOf(rs.getInt("id_type_provider"))
 
                         
@@ -146,6 +149,8 @@ public class ProviderController {
 
         return professions;
     }
+
+
 
     public List<String[]> getCateogryFilteredProviders(String category, String profession) {
         List<String[]> providers = new ArrayList<>();

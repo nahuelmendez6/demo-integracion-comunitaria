@@ -53,10 +53,21 @@ public class MainCustomerMenuView extends JFrame {
         btnConfigureProfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CustomerProfileView(customerId);
+                new CustomerProfileView(customerId).setVisible(true);
             }
         });
         buttonPanel.add(btnConfigureProfile);
+
+        // Botón: Configurar Perfil
+        JButton btnConfigureAddress = createMenuButton("Configurar Direccion", new Color(40, 200, 100));
+        btnConfigureAddress.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CustomerAddressView(customerId).setVisible(true);
+            }
+        });
+        buttonPanel.add(btnConfigureAddress);
+
 
         // Botón: Publicar Ofertas
         JButton btnPublishOffers = createMenuButton("Publicar Petición", new Color(241, 196, 15));

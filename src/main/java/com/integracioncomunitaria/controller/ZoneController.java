@@ -79,4 +79,48 @@ public class ZoneController {
         }
         return result;
     }
+
+
+    public Integer getZones(int providerId) {
+        int id_zone;
+        String query = "SELECT id_zone FROM provider_zone WHERE id_provider = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                id_zone =rs.getInt("id_zone");
+                return id_zone;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public List<String> getCitiesByZone(int idZone) {
+        List<String> cities = new ArrayList<>();
+        String query = """
+            SELECT ci.name FROM city ci
+            JOIN zone_city zc ON ci.id_city = zc.id_city
+            WHERE zc.id_zone = ?
+            ORDER BY ci.name
+        """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, idZone);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                cities.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cities;
+    }
+    
 }

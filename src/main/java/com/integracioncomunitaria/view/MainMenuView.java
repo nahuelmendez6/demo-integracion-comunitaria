@@ -60,7 +60,7 @@ public class MainMenuView extends JFrame {
 
 
         // Botón: Configurar Perfil
-        JButton btnConfigureProfile = createMenuButton("Configurar Perfil", new Color(46, 204, 113));
+        JButton btnConfigureProfile = createMenuButton("Perfil", new Color(46, 204, 113));
         btnConfigureProfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,7 +80,7 @@ public class MainMenuView extends JFrame {
         buttonPanel.add(btnInventory);
 
         // Botón: Gestionar Dirección
-        JButton btnManageAddress = createMenuButton("Gestionar Dirección", new Color(155, 89, 182));
+        JButton btnManageAddress = createMenuButton("Dirección", new Color(155, 89, 182));
         btnManageAddress.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,6 +89,16 @@ public class MainMenuView extends JFrame {
             }
         });
         buttonPanel.add(btnManageAddress);
+
+        // Botón: Gestionar zona
+        JButton btnZone = createMenuButton("Zona", new Color(150, 80, 180));
+        btnZone.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               new ZoneCitiesView(providerId).setVisible(true);
+            }
+        });
+        buttonPanel.add(btnZone);
 
         // Botón: Publicar Ofertas
         JButton btnPublishOffers = createMenuButton("Publicar Ofertas", new Color(241, 196, 15));

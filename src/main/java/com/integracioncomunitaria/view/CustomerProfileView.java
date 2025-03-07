@@ -2,89 +2,63 @@ package com.integracioncomunitaria.view;
 
 import javax.swing.*;
 import java.awt.*;
-import com.integracioncomunitaria.controller.CustomerProfileController;
+import java.util.List;
+import com.integracioncomunitaria.controller.CustomerController;
 
 public class CustomerProfileView extends JFrame {
-    private JTextField txtName, txtLastName, txtEmail, txtStreet, txtNumber, txtDpto, txtFloor;
-    private JComboBox<String> cbCountry, cbProvince, cbDepartment, cbCity;
-    private JList<String> categoryList;
-    private DefaultListModel<String> categoryListModel;
-    private JButton btnSave;
-    private int customerId;
-    private CustomerProfileController controller;
     
+    private CustomerController customerController;
+
     public CustomerProfileView(int customerId) {
-        this.customerId = customerId;
-        this.controller = new CustomerProfileController(this);
-        
-        setTitle("Perfil del Cliente");
-        setSize(500, 600);
-        setLayout(new GridLayout(10, 2));
+        this.customerController = new CustomerController();
+
+        setTitle("Perfil del Proveedor");
+        setSize(600, 300);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         
-        // Campos de usuario
-        txtName = new JTextField();
-        txtLastName = new JTextField();
-        txtEmail = new JTextField();
+
+        List<String[]> customerData = customerController.getCustomerData(customerId);
+
+        if (customerData.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No se encontró información del cliente", "Error", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
+        }
+
+        String[] columnNames = {"Campo", "Información"};
+        String[] data = customerData.get(0);
+
+        String[][] tableData = {
+            {"Nombre", data[1]},
+            {"Apellido", data[2]},
+            {"Email", data[3]}
+        };
+
+        JTable profileTable = new JTable(tableData, columnNames);
+        profileTable.setEnabled(false); // Deshabilitar edición
+        JScrollPane scrollPane = new JScrollPane(profileTable);
         
-        // Campos de dirección
-        cbCountry = new JComboBox<>();
-        cbProvince = new JComboBox<>();
-        cbDepartment = new JComboBox<>();
-        cbCity = new JComboBox<>();
-        txtStreet = new JTextField();
-        txtNumber = new JTextField();
-        txtDpto = new JTextField();
-        txtFloor = new JTextField();
-        
-        // Categorías de interés
-        categoryListModel = new DefaultListModel<>();
-        categoryList = new JList<>(categoryListModel);
-        
-        btnSave = new JButton("Guardar Cambios");
-        btnSave.addActionListener(e -> controller.saveProfile());
-        
-        // Agregar componentes a la ventana
-        add(new JLabel("Nombre:"));
-        add(txtName);
-        add(new JLabel("Apellido:"));
-        add(txtLastName);
-        add(new JLabel("Email:"));
-        add(txtEmail);
-        add(new JLabel("País:"));
-        add(cbCountry);
-        add(new JLabel("Provincia:"));
-        add(cbProvince);
-        add(new JLabel("Departamento:"));
-        add(cbDepartment);
-        add(new JLabel("Ciudad:"));
-        add(cbCity);
-        add(new JLabel("Calle:"));
-        add(txtStreet);
-        add(new JLabel("Número:"));
-        add(txtNumber);
-        add(new JLabel("Dpto:"));
-        add(txtDpto);
-        add(new JLabel("Piso:"));
-        add(txtFloor);
-        add(new JLabel("Categorías de Interés:"));
-        add(new JScrollPane(categoryList));
-        add(btnSave);
-        
-        // Cargar los datos del perfil
-        controller.loadProfileData(customerId);
+        JButton updateProfile = new JButton("Actualizar perfil");
+        updateProfile.addActionListener(e -> updateCustomerProfile(customerId));
+
+        JButton closeButton = new JButton("Cerrar");
+        closeButton.addActionListener(e -> dispose());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(closeButton);
+        buttonPanel.add(updateProfile);
+
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+
     }
-    
-    public JTextField getTxtName() { return txtName; }
-    public JTextField getTxtLastName() { return txtLastName; }
-    public JTextField getTxtEmail() { return txtEmail; }
-    public JTextField getTxtStreet() { return txtStreet; }
-    public JTextField getTxtNumber() { return txtNumber; }
-    public JTextField getTxtDpto() { return txtDpto; }
-    public JTextField getTxtFloor() { return txtFloor; }
-    public JComboBox<String> getCbCountry() { return cbCountry; }
-    public JComboBox<String> getCbProvince() { return cbProvince; }
-    public JComboBox<String> getCbDepartment() { return cbDepartment; }
-    public JComboBox<String> getCbCity() { return cbCity; }
-    public DefaultListModel<String> getCategoryListModel() { return categoryListModel; }
+
+    private void updateCustomerProfile(int customerId) {
+        new EditCustomerProfileView(customerId).setVisible(true);
+    }
+
 }

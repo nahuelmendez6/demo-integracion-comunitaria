@@ -31,8 +31,7 @@ public class FilterProviderView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel filterPanel = new JPanel();
-        filterPanel.setLayout(new FlowLayout());
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
 
         categoryComboBox = new JComboBox<>(providerController.getCategories().toArray(new String[0]));
         professionComboBox = new JComboBox<>(providerController.getProfessions().toArray(new String[0]));
@@ -79,6 +78,9 @@ public class FilterProviderView extends JFrame {
     }
 
     private void displayProviders(List<String[]> providers) {
+        providerPanel.removeAll();
+        providerPanel.setLayout(new GridLayout(0, 1, 5, 5));
+
         if (providers.isEmpty()) {
             providerPanel.add(new JLabel("No se encontraron proveedores disponibles."));
         } else {
@@ -94,7 +96,9 @@ public class FilterProviderView extends JFrame {
         JPanel providerPanel = new JPanel(new BorderLayout());
         providerPanel.setBorder(BorderFactory.createTitledBorder(provider[1]));
         providerPanel.setBackground(Color.LIGHT_GRAY);
-
+        
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        
         String[] columnNames = {"Nombre", "Categoría", "Profesión"};
         Object[][] data = {{provider[1], provider[2], provider[3]}};
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
@@ -104,24 +108,36 @@ public class FilterProviderView extends JFrame {
                 return false;
             }
         };
-        providerTable.setRowHeight(30);
-        providerPanel.add(new JScrollPane(providerTable), BorderLayout.NORTH);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        providerTable.setRowHeight(25);
+        providerTable.setPreferredScrollableViewportSize(new Dimension(300, 30));
+        contentPanel.add(new JScrollPane(providerTable), BorderLayout.NORTH);
+        
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 6, 5, 5));
         JButton offersButton = new JButton("Ver Ofertas");
         JButton portfolioButton = new JButton("Ver Portfolio");
         JButton contactButton = new JButton("Contactar");
+        JButton gradeButton = new JButton("Ver calificación");
+        JButton availavilityButton = new JButton("Disponibilidad");
+        JButton providerInventory = new JButton("Ver inventario");
 
         int providerId = Integer.parseInt(provider[0]);
         offersButton.addActionListener(e -> showOffers(providerId));
         portfolioButton.addActionListener(e -> showPortfolio(providerId));
         contactButton.addActionListener(e -> contactProvider(providerId));
+        gradeButton.addActionListener(e -> showGradeProvider(providerId));
+        availavilityButton.addActionListener(e -> showAvailability(providerId));
+        providerInventory.addActionListener(e -> showInventory(providerId));
 
         buttonPanel.add(offersButton);
         buttonPanel.add(portfolioButton);
         buttonPanel.add(contactButton);
-        providerPanel.add(buttonPanel, BorderLayout.CENTER);
+        buttonPanel.add(gradeButton);
+        buttonPanel.add(availavilityButton);
+        buttonPanel.add(providerInventory);
 
+        contentPanel.add(buttonPanel, BorderLayout.CENTER);
+        providerPanel.add(contentPanel, BorderLayout.CENTER);
+        
         return providerPanel;
     }
 
@@ -142,6 +158,7 @@ public class FilterProviderView extends JFrame {
         JOptionPane.showMessageDialog(this, offersText.toString(), "Ofertas del Proveedor", JOptionPane.INFORMATION_MESSAGE);
     }
 
+
     private void showPortfolio(int providerId) {
         List<Map<String, Object>> portfolios = portfolioController.getPortfoliosByProvider(providerId);
         if (portfolios.isEmpty()) {
@@ -152,5 +169,19 @@ public class FilterProviderView extends JFrame {
     private void contactProvider(int providerId) {
         ContactProviderDialog dialog = new ContactProviderDialog(this, providerId, customerId);
         dialog.setVisible(true);
+    }
+
+    private void showGradeProvider(int providerId) {
+        ProviderRatingDialog dialog = new ProviderRatingDialog(this, providerId);
+        dialog.setVisible(true);
+    }
+
+    private void showAvailability(int providerId) {
+        ProviderAvailabilityView dialog = new ProviderAvailabilityView(this, providerId);
+        dialog.setVisible(true);
+    }
+
+    private void showInventory(int providerId) {
+        new ProviderInventoryView(providerId).setVisible(true);
     }
 }
