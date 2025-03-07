@@ -53,15 +53,17 @@ public class ProviderInventoryView extends JFrame {
             JOptionPane.showMessageDialog(this, "Este proveedor no tiene inventario.", "Inventario vacío", JOptionPane.INFORMATION_MESSAGE);
         } else {
             for (Inventory item : inventory) {
+                System.out.println("Cargando en la tabla: " + item.getArticle() + " - Cantidad: " + item.getQuantity());
                 tableModel.addRow(new Object[]{
-                    item.getIdInventory(), 
-                    item.getArticle(), 
-                    item.getQuantity(), 
+                    item.getIdInventory(),
+                    item.getArticle(),
+                    item.getQuantity(),
                     item.getCost()
                 });
             }
         }
     }
+    
     
     
 }

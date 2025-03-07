@@ -1,5 +1,6 @@
 package com.integracioncomunitaria.controller;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,24 +60,41 @@ public class InventoryController {
     // Método para obtener los productos del inventario con el nombre del artículo
     public List<Inventory> getInventoryByProvider(int providerId) {
         List<Inventory> inventoryList = new ArrayList<>();
-        String sql = "SELECT i.id_inventory, a.name AS article, i.quantity, i.cost " +
-                     "FROM inventory i JOIN article a ON i.id_article = a.id_article " +
-                     "WHERE i.id_user_create = ?";
+        String sql = "SELECT i.id_inventory, COALESCE(a.name, 'Desconocido') AS article, i.quantity, i.cost " +
+             "FROM inventory i LEFT JOIN article a ON i.id_article = a.id_article " +
+             "WHERE i.id_user_create = ?";
+            // id_user_create representa al id_provider
+    
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, providerId);
             ResultSet rs = stmt.executeQuery();
+    
+            System.out.println("Obteniendo datos para providerId: " + providerId);
+            
             while (rs.next()) {
+                String articleName = rs.getString("article");
+                int quantity = rs.getInt("quantity");
+                BigDecimal cost = rs.getBigDecimal("cost");
+            
+                System.out.println("Item recuperado desde BD: " + articleName + " - Cantidad: " + quantity + " - Costo: " + cost);
+            
                 Inventory item = new Inventory(
                     rs.getInt("id_inventory"),
-                    rs.getString("article"), 
-                    rs.getInt("quantity"), 
-                    rs.getBigDecimal("cost")
+                    articleName, // 🔵 Ahora pasamos solo el nombre del artículo
+                    quantity, 
+                    cost
                 );
+            
                 inventoryList.add(item);
             }
+            
+    
+            System.out.println("Total de artículos recuperados: " + inventoryList.size());
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return inventoryList;
     }
+    
 }

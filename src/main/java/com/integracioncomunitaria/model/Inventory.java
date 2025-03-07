@@ -23,17 +23,17 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(int idInventory, Article article, int quantity, BigDecimal cost) {
+    public Inventory(int idInventory, String articleName, int quantity, BigDecimal cost) {
         this.idInventory = idInventory;
-        this.article = article;
+        this.article = new Article(); // Crea el objeto
+        this.article.setName(articleName); // Asigna el nombre
         this.quantity = quantity;
         this.cost = cost;
     }
+    
 
 
-    public Inventory(int id_inventory, String id_article, int quantity, BigDecimal cost) {
-        
-    }
+
 
 
 

@@ -17,6 +17,10 @@ public class Article {
         this.categoryId = categoryId;
     }
 
+    public Article() {
+        
+    }
+
     public int getIdArticle() {
         return idArticle;
     }
@@ -27,6 +31,10 @@ public class Article {
 
     public int getCategoryId() {
         return categoryId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

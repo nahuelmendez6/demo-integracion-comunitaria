@@ -41,13 +41,13 @@ public class RateProviderDialog extends JDialog {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                submitRating();
+                submitRating(providerId, userId);
             }
         });
         add(submitButton, BorderLayout.SOUTH);
     }
 
-    private void submitRating() {
+    private void submitRating(int providerId, int userId) {
         int rating = (int) ratingComboBox.getSelectedItem();
         String comment = commentArea.getText().trim();
 
