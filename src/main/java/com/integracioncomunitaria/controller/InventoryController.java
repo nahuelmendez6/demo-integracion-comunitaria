@@ -12,11 +12,21 @@ import com.integracioncomunitaria.model.Inventory;
 public class InventoryController {
     private Connection connection;
 
+    /**
+     * Constructor que inicializa la conexión con la base de datos.
+     */
     public InventoryController() {
         this.connection = DatabaseConnection.getConnection();
     }
 
-    // Método para agregar un nuevo artículo a la tabla `article`
+    
+    /**
+     * Agrega un nuevo artículo a la tabla `article`.
+     * @param name Nombre del artículo.
+     * @param categoryId ID de la categoría del artículo.
+     * @param userId ID del usuario que crea el artículo.
+     * @return ID del artículo creado o -1 si la operación falla.
+     */
     public int addArticle(String name, int categoryId, int userId) {
         String sql = "INSERT INTO article (name, id_category, id_user_create, id_user_update) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -36,7 +46,16 @@ public class InventoryController {
         return -1;
     }
 
-    // Método modificado para agregar productos al inventario
+    /**
+     * Agrega un producto al inventario después de registrar el artículo en la base de datos.
+     * @param providerId ID del proveedor (se usa como id_user_create en inventory).
+     * @param articleName Nombre del artículo.
+     * @param categoryId ID de la categoría del artículo.
+     * @param quantity Cantidad del producto en inventario.
+     * @param cost Costo del producto.
+     * @param userId ID del usuario que realiza la acción.
+     * @return true si la operación fue exitosa, false en caso contrario.
+     */
     public boolean addProductToInventory(int providerId, String articleName, int categoryId, int quantity, double cost, int userId) {
         int articleId = addArticle(articleName, categoryId, userId);
         if (articleId == -1) {
@@ -57,7 +76,11 @@ public class InventoryController {
         return false;
     }
 
-    // Método para obtener los productos del inventario con el nombre del artículo
+        /**
+     * Obtiene los productos en el inventario de un proveedor específico.
+     * @param providerId ID del proveedor (se mapea con id_user_create en inventory).
+     * @return Lista de objetos Inventory que representan los productos del proveedor.
+     */
     public List<Inventory> getInventoryByProvider(int providerId) {
         List<Inventory> inventoryList = new ArrayList<>();
         String sql = "SELECT i.id_inventory, COALESCE(a.name, 'Desconocido') AS article, i.quantity, i.cost " +

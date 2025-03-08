@@ -9,7 +9,11 @@ import java.util.Map;
 
 public class PortfolioController {
 
-    // Método para obtener todos los portfolios de un proveedor
+        /**
+     * Obtiene todos los portfolios asociados a un proveedor específico.
+     * @param providerId El ID del proveedor cuyos portfolios se desean obtener.
+     * @return Una lista de mapas, donde cada mapa contiene la información de un portfolio (id, nombre, descripción, fecha de creación).
+     */
     public List<Map<String, Object>> getPortfoliosByProvider(int providerId) {
         List<Map<String, Object>> portfolios = new ArrayList<>();
         String query = "SELECT * FROM portfolio WHERE id_provider = ?";
@@ -34,7 +38,13 @@ public class PortfolioController {
         return portfolios;
     }
 
-    // Método para crear un nuevo portfolio
+        /**
+     * Crea un nuevo portfolio asociado a un proveedor específico.
+     * @param providerId El ID del proveedor para quien se creará el portfolio.
+     * @param name El nombre del portfolio.
+     * @param description La descripción del portfolio.
+     * @return True si el portfolio fue creado exitosamente, false en caso contrario.
+     */
     public boolean createPortfolio(int providerId, String name, String description) {
         String query = "INSERT INTO portfolio (name, description, id_provider) " +
                        "VALUES (?, ?, ?)";
@@ -59,7 +69,14 @@ public class PortfolioController {
         return false;
     }
 
-    // Método para agregar un archivo adjunto a un portfolio
+        /**
+     * Agrega un archivo adjunto a un portfolio específico.
+     * @param portfolioId El ID del portfolio al cual se le añadirá el archivo adjunto.
+     * @param fileName El nombre del archivo adjunto.
+     * @param filePath La ruta del archivo adjunto.
+     * @param userId El ID del usuario que está agregando el archivo.
+     * @return True si el archivo fue agregado correctamente, false en caso contrario.
+     */
     public boolean addAttachmentToPortfolio(int portfolioId, String fileName, String filePath, int userId) {
         String query = "INSERT INTO attachment (id_portfolio, name, path, id_user_create, id_user_update, date_create, date_update) " +
                        "VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
@@ -81,7 +98,11 @@ public class PortfolioController {
         }
     }
 
-    // Método para obtener archivos adjuntos de un portfolio
+      /**
+     * Obtiene los archivos adjuntos asociados a un portfolio específico.
+     * @param portfolioId El ID del portfolio cuyos archivos adjuntos se desean obtener.
+     * @return Una lista de mapas, donde cada mapa contiene la información de un archivo adjunto (id, nombre, ruta).
+     */
     public List<Map<String, Object>> getAttachmentsByPortfolio(int portfolioId) {
         List<Map<String, Object>> attachments = new ArrayList<>();
         String query = "SELECT * FROM attachment WHERE id_portfolio = ?";

@@ -24,7 +24,7 @@ public class NotificationDialogCustomer extends JDialog {
         this.customerController = new CustomerController();
 
 
-        setSize(700, 400); // Aumentado el tamaño horizontalmente
+        setSize(700, 400); 
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 

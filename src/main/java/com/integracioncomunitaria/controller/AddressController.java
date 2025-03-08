@@ -10,8 +10,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Controlador para gestionar la carga y almacenamiento de direcciones en la base de datos.
+ */
 public class AddressController {
 
+
+
+    /**
+     * Carga las provincias del país con ID 7.
+     * @return Un array de Strings con los nombres de las provincias.
+     */
     public String[] loadProvinces() {
         String query = "SELECT name FROM province WHERE id_country = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -31,7 +41,11 @@ public class AddressController {
         }
     }
 
-
+    /**
+     * Carga los departamentos de una provincia específica.
+     * @param provinceId ID de la provincia.
+     * @return Lista de nombres de los departamentos.
+     */
     public List<String> loadDepartments(int provinceId) {
         String query = "SELECT name_departament FROM departament WHERE id_province = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -52,6 +66,11 @@ public class AddressController {
     }
     
 
+    /**
+     * Carga las ciudades de un departamento específico.
+     * @param departmentId ID del departamento.
+     * @return Lista de nombres de las ciudades.
+     */
     public List<String> loadCities(int departmentId) {
         String query = "SELECT name FROM city WHERE id_department = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -71,7 +90,11 @@ public class AddressController {
         }
     }
     
-
+ /**
+     * Obtiene el ID de una provincia dado su nombre.
+     * @param provinceName Nombre de la provincia.
+     * @return ID de la provincia o -1 si no se encuentra.
+     */
 public int getProvinceId(String provinceName) {
         String query = "SELECT id_province FROM province WHERE name= ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -86,7 +109,11 @@ public int getProvinceId(String provinceName) {
         }
         return -1; // Retorna -1 si no se encuentra la provincia
     }
-
+    /**
+     * Obtiene el ID de un departamento dado su nombre.
+     * @param departmentName Nombre del departamento.
+     * @return ID del departamento o -1 si no se encuentra.
+     */
     public int getDepartmentId(String departmentName) {
         String query = "SELECT id_departament FROM departament WHERE name_departament = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -102,6 +129,11 @@ public int getProvinceId(String provinceName) {
         return -1; // Retorna -1 si no se encuentra el departamento
     }
 
+    /**
+     * Obtiene el ID de una ciudad dado su nombre.
+     * @param cityName Nombre de la ciudad.
+     * @return ID de la ciudad o -1 si no se encuentra.
+     */
     public int getCityId(String cityName) {
         String query = "SELECT id_city FROM city WHERE name = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -117,6 +149,19 @@ public int getProvinceId(String provinceName) {
         return -1; // Retorna -1 si no se encuentra la ciudad
     }
 
+
+    /**
+     * Guarda la dirección de un proveedor en la base de datos.
+     * @param idProvider ID del proveedor.
+     * @param provinceId ID de la provincia.
+     * @param departmentId ID del departamento.
+     * @param cityId ID de la ciudad.
+     * @param street Calle.
+     * @param number Número.
+     * @param dpto Departamento.
+     * @param floor Piso.
+     * @return Objeto ResultDataBase con el resultado de la operación.
+     */
     public ResultDataBase saveAddress(int idProvider, int provinceId, int departmentId, int cityId, String street, String number, String dpto, String floor) {
         String query = "INSERT INTO provider_address (id_provider, id_country,id_province, id_departament, id_city, street, number_str, dpto, floor_dpto, date_create) " +
                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";

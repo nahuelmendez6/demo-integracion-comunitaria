@@ -1,23 +1,24 @@
 package com.integracioncomunitaria.database;
 
 
-
+// Clase que representa el resultado de una operacion en la base de datos
 public class ResultDataBase {
-    private boolean success;
-    private String message;
-    private Object object;
+    private boolean success;    // operacion exitosa
+    private String message;     // mensaje asociado al resultado de la operacion
+    private Object object;      // objecto que puede contener informacion adicional relacionada con el resultado
 
-    // Constructor
+    // Constructor por defecto, establece valores predeterminados
     public ResultDataBase() {
-        this.success = false;
-        this.message = "";
-        this.object = null;
+        this.success = false;   // Por defecto, la operación no fue exitosa
+        this.message = "";       // Sin mensaje por defecto
+        this.object = null;     // Sin objeto asociado por defecto
     }
 
+    // Constructor que permite establecer el éxito y el mensaje al momento de la creación
     public ResultDataBase(boolean success, String message) {
-        this.success = success;
-        this.message = message;
-        this.object = null;
+        this.success = success; // Constructor que permite establecer el éxito y el mensaje al momento de la creación
+        this.message = message; // Establece el mensaje asociado al resultado
+        this.object = null;     // No se asocia un objeto adicional en este constructor
     }
 
     // Getters y Setters

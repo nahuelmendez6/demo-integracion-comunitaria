@@ -9,7 +9,12 @@ import java.util.Map;
 
 public class OfferController {
 
-    // Método para obtener los tipos de oferta desde la base de datos
+
+    
+    /**
+     * Obtiene los tipos de oferta desde la base de datos.
+     * @return Una lista de mapas con los tipos de oferta disponibles, cada mapa contiene el ID y el nombre de cada tipo de oferta.
+     */
     public List<Map<String, Object>> getOfferTypes() {
         List<Map<String, Object>> offerTypes = new ArrayList<>();
         String query = "SELECT id_type_offer, nombre FROM type_offer";
@@ -31,7 +36,11 @@ public class OfferController {
         return offerTypes;
     }
 
-    // Método para obtener las ofertas de un proveedor específico
+        /**
+     * Obtiene las ofertas asociadas a un proveedor específico.
+     * @param providerId El ID del proveedor cuya ofertas se desean obtener.
+     * @return Una lista de mapas con las ofertas del proveedor, cada mapa contiene los detalles de la oferta.
+     */
     public List<Map<String, Object>> getOffersByProvider(int providerId) {
         List<Map<String, Object>> offers = new ArrayList<>();
         String query = "SELECT o.id_offer, o.id_type_offer, t.nombre AS type_offer, o.name, o.date_open, o.date_close, o.description " +
@@ -62,7 +71,17 @@ public class OfferController {
         return offers;
     }
 
-    // Método para crear una nueva oferta
+    
+    /**
+     * Crea una nueva oferta y la guarda en la base de datos.
+     * @param idTypeOffer El ID del tipo de oferta.
+     * @param name El nombre de la oferta.
+     * @param dateOpen La fecha de apertura de la oferta en formato de cadena.
+     * @param dateClose La fecha de cierre de la oferta en formato de cadena.
+     * @param description La descripción de la oferta.
+     * @param userId El ID del usuario que crea la oferta.
+     * @return True si la oferta fue creada con éxito, false en caso contrario.
+     */
     public boolean createOffer(int idTypeOffer, String name, String dateOpen, String dateClose, String description, int userId) {
         String query = "INSERT INTO offer (id_type_offer, name, date_open, date_close, description, id_user_create, id_user_update, date_create, date_update) " +
                        "VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
@@ -87,7 +106,11 @@ public class OfferController {
         }
     }
 
-    // Método para eliminar una oferta
+        /**
+     * Elimina una oferta de la base de datos.
+     * @param offerId El ID de la oferta que se desea eliminar.
+     * @return True si la oferta fue eliminada con éxito, false en caso contrario.
+     */
     public boolean deleteOffer(int offerId) {
         String query = "DELETE FROM offer WHERE id_offer = ?";
 
@@ -104,7 +127,11 @@ public class OfferController {
         }
     }
 
-    // Método para desactivar una oferta (actualizando la fecha de cierre)
+        /**
+     * Desactiva una oferta actualizando la fecha de cierre.
+     * @param offerId El ID de la oferta que se desea desactivar.
+     * @return True si la oferta fue desactivada con éxito, false en caso contrario.
+     */
     public boolean deactivateOffer(int offerId) {
         String query = "UPDATE offer SET date_close = NOW() WHERE id_offer = ?";
 

@@ -6,8 +6,10 @@ import java.util.*;
 
 public class AvailabilityController {
 
-    /**
-     * Obtiene la lista de días de la tabla `week`
+/**
+     * Obtiene la lista de días de la semana desde la tabla `week`.
+     * 
+     * @return Lista de mapas con la información de los días de la semana (id y nombre).
      */
     public List<Map<String, Object>> getWeekDays() {
         List<Map<String, Object>> days = new ArrayList<>();
@@ -29,8 +31,12 @@ public class AvailabilityController {
         return days;
     }
 
+
     /**
-     * Obtiene la lista de horas de la tabla `hour` según un `id_week` dado.
+     * Obtiene la lista de horas disponibles en un día específico.
+     *
+     * @param idWeek Identificador del día de la semana.
+     * @return Lista de mapas con la información de las horas disponibles (id y nombre).
      */
     public List<Map<String, Object>> getHoursByDay(int idWeek) {
         List<Map<String, Object>> hours = new ArrayList<>();
@@ -54,8 +60,16 @@ public class AvailabilityController {
         return hours;
     }
 
+ 
     /**
-     * Guarda la disponibilidad del proveedor en la tabla `availability`.
+     * Guarda la disponibilidad de un proveedor en la base de datos.
+     *
+     * @param providerId   Identificador del proveedor.
+     * @param idWeek       Día de la semana.
+     * @param idFromHour   Hora de inicio de disponibilidad.
+     * @param idUntilHour  Hora de fin de disponibilidad.
+     * @param userCreateId Identificador del usuario que registra la disponibilidad.
+     * @return `true` si el registro fue exitoso, `false` en caso de error.
      */
     public boolean saveAvailability(int providerId, int idWeek, int idFromHour, int idUntilHour, int userCreateId) {
         String sql = "INSERT INTO availability (id_provider, id_week, id_from_hour, id_until_hour, id_user_create, date_create) " +
@@ -80,6 +94,12 @@ public class AvailabilityController {
 
     }
 
+        /**
+     * Obtiene la disponibilidad horaria de un proveedor.
+     *
+     * @param providerId Identificador del proveedor.
+     * @return Cadena de texto con la disponibilidad del proveedor por día.
+     */
     public String getProviderAvailability(int providerId) {
         String query = """
             SELECT w.name AS day, h.name AS from_hour, h2.name AS until_hour

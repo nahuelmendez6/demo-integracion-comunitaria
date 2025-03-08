@@ -22,6 +22,7 @@ public class UserController {
 
     private static final String UPLOAD_DIRECTORY = "uploads/";
 
+    // Metodo para registrar un nuevo usuario en la base de datos
     public ResultDataBase registerUser(User user, String group) {
         ResultDataBase result = new ResultDataBase();
         String sql = "INSERT INTO user (name, last_name, email, password, id_profile) VALUES (?, ?, ?, ?, ?)";

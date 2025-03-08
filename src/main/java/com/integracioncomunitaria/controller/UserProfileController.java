@@ -9,13 +9,17 @@ import java.sql.SQLException;
 
 public class UserProfileController {
 
+     // Método para registrar un perfil de usuario en la base de datos
     public ResultDataBase registerUserProfile(int userId, String email, String roleType) {
         ResultDataBase result = new ResultDataBase();
+        
+        // Consulta SQL para insertar un nuevo perfil de usuario en la base de datos
         String sql = "INSERT INTO user_profile (email, role_type, user_id) VALUES (?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
+            // Establecer los parámetros de la sentencia SQL
             statement.setString(1, email);
             statement.setString(2, roleType);
             statement.setInt(3, userId);

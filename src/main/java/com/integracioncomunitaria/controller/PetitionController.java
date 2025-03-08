@@ -8,6 +8,10 @@ import java.util.List;
 
 public class PetitionController {
 
+        /**
+     * Obtiene los tipos de peticiones disponibles desde la base de datos.
+     * @return Una lista de arreglos de cadenas, donde cada arreglo contiene el ID y el nombre de un tipo de petición.
+     */
     public List<String[]> getTypePetitions() {
         List<String[]> typePetitions = new ArrayList<>();
         String query = "SELECT id_type_petition, name FROM type_petition";
@@ -29,6 +33,15 @@ public class PetitionController {
         return typePetitions;
     }
 
+    /**
+     * Crea una nueva petición en la base de datos.
+     * @param idTypePetition El ID del tipo de petición.
+     * @param description La descripción de la petición.
+     * @param dateSince La fecha desde la cual la petición es válida.
+     * @param dateUntil La fecha hasta la cual la petición es válida.
+     * @param idCustomer El ID del cliente que crea la petición.
+     * @return True si la petición fue creada con éxito, false en caso contrario.
+     */
     public boolean createPetition(int idTypePetition, String description, Date dateSince, Date dateUntil, int idCustomer) {
         String query = "INSERT INTO petition (id_type_petition, description, date_since, date_until, id_customer, id_user_create) " +
                        "VALUES (?, ?, ?, ?, ?, ?)";
@@ -52,6 +65,11 @@ public class PetitionController {
         }
     }
 
+        /**
+     * Obtiene las peticiones asociadas a un cliente específico.
+     * @param customerId El ID del cliente cuyas peticiones se desean obtener.
+     * @return Una lista de arreglos de cadenas, donde cada arreglo contiene los detalles de una petición.
+     */
     public List<String[]> getPetitionsByCustomer(int customerId) {
         List<String[]> petitions = new ArrayList<>();
         String query = "SELECT id_petition, id_type_petition, description, date_since, date_until FROM petition WHERE id_customer = ?";
@@ -78,6 +96,11 @@ public class PetitionController {
         return petitions;
     }
 
+        /**
+     * Obtiene las peticiones disponibles para un proveedor específico.
+     * @param providerId El ID del proveedor que desea obtener las peticiones disponibles.
+     * @return Una lista de arreglos de cadenas, donde cada arreglo contiene los detalles de una petición disponible para el proveedor.
+     */
     public List<String[]> getAvailablePetitions(int providerId) {
         List<String[]> petitions = new ArrayList<>();
         String query = """
@@ -113,6 +136,12 @@ public class PetitionController {
         return petitions;
     }
 
+        /**
+     * Obtiene las peticiones disponibles para un proveedor específico, filtradas por tipo de petición.
+     * @param providerId El ID del proveedor que desea obtener las peticiones disponibles.
+     * @param typePetitionId El ID del tipo de petición que se desea filtrar.
+     * @return Una lista de arreglos de cadenas, donde cada arreglo contiene los detalles de una petición disponible para el proveedor y tipo de petición especificado.
+     */
     public List<String[]> getAvailablePetitionsByType(int providerId, int typePetitionId) {
         List<String[]> petitions = new ArrayList<>();
         String query = """

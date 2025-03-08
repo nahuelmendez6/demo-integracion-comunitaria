@@ -10,6 +10,14 @@ import java.util.List;
 
 public class PostulationController {
 
+        /**
+     * Permite que un proveedor se postule a una petición específica, enviando su propuesta y costo.
+     * @param petitionId El ID de la petición a la cual el proveedor está aplicando.
+     * @param providerId El ID del proveedor que está realizando la postulación.
+     * @param proposal La propuesta enviada por el proveedor.
+     * @param cost El costo asociado a la propuesta del proveedor.
+     * @return True si la postulación fue realizada exitosamente, false en caso contrario.
+     */
     public boolean applyToPetition(int petitionId, int providerId, String proposal, int cost) {
         String query = """
             INSERT INTO postulation (id_petition, id_provider, winner, proposal, cost, id_state, current, id_user_create, id_user_update)
@@ -35,6 +43,11 @@ public class PostulationController {
         }
     }
 
+        /**
+     * Obtiene todas las postulaciones realizadas por un cliente.
+     * @param customerId El ID del cliente cuyos proveedores postulantes se desean obtener.
+     * @return Una lista de arreglos de cadenas con información sobre las postulaciones (ID, propuesta, costo, nombre del proveedor, etc.).
+     */
     public List<String[]> getPostulationsByCustomer(int customerId) {
         List<String[]> postulations = new ArrayList<>();
     
@@ -105,6 +118,11 @@ public class PostulationController {
         return postulations;
     }
 
+        /**
+     * Obtiene el ID de la petición asociada a una postulación específica.
+     * @param postulationId El ID de la postulación.
+     * @return El ID de la petición asociada a la postulación o -1 si no se encuentra.
+     */
     public Integer getIdPetitionByPostulation(int postulationId) {
         String query = "SELECT id_petition FROM postulation WHERE idpostulation = ?";
 
@@ -122,6 +140,12 @@ public class PostulationController {
 
     }
     
+        /**
+     * Finaliza una postulación, cambiando su estado a "NO" y actualizando el estado de la postulación a finalizado.
+     * @param postulationId El ID de la postulación a finalizar.
+     * @param petitionId El ID de la petición relacionada con la postulación.
+     * @return True si la postulación fue finalizada correctamente, false en caso contrario.
+     */
     public boolean finishPostulation(int postulationId, int petitionId) {
         String query = """
                 UPDATE postulation
@@ -143,7 +167,12 @@ public class PostulationController {
     }
 
 
-
+        /**
+     * Cancela una postulación, cambiando su estado a cancelado y marcando que no es el ganador.
+     * @param postulationId El ID de la postulación a cancelar.
+     * @param petitionId El ID de la petición relacionada con la postulación.
+     * @return True si la postulación fue cancelada correctamente, false en caso contrario.
+     */
     public boolean cancelPostulation(int postulationId, int petitionId) {
         String query = """
                 UPDATE postulation
@@ -164,6 +193,13 @@ public class PostulationController {
             }
     }
 
+
+    /**
+     * Acepta una postulación, marcando al proveedor como el ganador y actualizando el estado de la postulación.
+     * @param postulationId El ID de la postulación a aceptar.
+     * @param petitionId El ID de la petición relacionada con la postulación.
+     * @return True si la postulación fue aceptada correctamente, false en caso contrario.
+     */
     public boolean acceptPostulation(int postulationId, int petitionId) {
         String query = """
             UPDATE postulation 

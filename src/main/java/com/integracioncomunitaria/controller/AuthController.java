@@ -10,6 +10,13 @@ import java.sql.SQLException;
 
 public class AuthController {
 
+
+    /**
+     * Autentica a un usuario en el sistema.
+     * @param email Correo electrónico del usuario.
+     * @param password Contraseña ingresada por el usuario.
+     * @return Un objeto User si la autenticación es exitosa, null en caso contrario.
+     */
     public User login(String email, String password) {
         User user = null;
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -37,7 +44,11 @@ public class AuthController {
         }
         return user;
     }
-
+       /**
+     * Verifica si un usuario es un cliente.
+     * @param userId ID del usuario a verificar.
+     * @return true si el usuario es un cliente, false en caso contrario.
+     */
     public Boolean userIsCustomer(int userId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             // buscar el usuario en la tabla user_profile
@@ -62,7 +73,11 @@ public class AuthController {
         return false;
     }
 
-
+        /**
+     * Verifica si un usuario es un proveedor.
+     * @param userId ID del usuario a verificar.
+     * @return true si el usuario es un proveedor, false en caso contrario.
+     */
     public Boolean userIsProvider(int userId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Buscar el usuario en la tabla user_prfile
@@ -85,7 +100,11 @@ public class AuthController {
         }
         return false;
     }
-
+        /**
+     * Obtiene el ID del proveedor asociado a un usuario.
+     * @param userId ID del usuario.
+     * @return ID del proveedor si existe, null en caso contrario.
+     */
     public Integer getProviderId(int userId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "SELECT id_provider FROM provider WHERE id_user = ?";
@@ -101,7 +120,11 @@ public class AuthController {
         }
         return null;
     }
-
+        /**
+     * Obtiene el ID del cliente asociado a un usuario.
+     * @param userId ID del usuario.
+     * @return ID del cliente si existe, null en caso contrario.
+     */
     public Integer getCustomerId(int userId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "SELECT id_customer FROM customer WHERE id_user = ?";

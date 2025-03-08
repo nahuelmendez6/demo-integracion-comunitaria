@@ -14,6 +14,10 @@ import java.util.List;
 
 public class CustomerController {
 
+
+        /**
+     * Registra un nuevo cliente en la base de datos.
+     */
     public ResultDataBase registerCustomer(Customer customer) {
         ResultDataBase result = new ResultDataBase();
         String sql = "INSERT INTO customer (name, adress ,id_user) VALUES (?, ?, ?)";
@@ -42,6 +46,10 @@ public class CustomerController {
         return result;
     }
 
+
+    /**
+     * Obtiene el nombre de un cliente por su ID.
+     */
     public String getCustomerName(int customerId) {
         String query = "SELECT name FROM customer WHERE id_customer = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -57,6 +65,10 @@ public class CustomerController {
             return "Cliente desconocido";
     }
 
+
+    /**
+     * Obtiene la dirección de un cliente por su ID.
+     */
     public List<String[]> getCustomerAddress(int id_customer) {
         List<String[]> customerAddress = new ArrayList<>();
 
@@ -98,6 +110,10 @@ public class CustomerController {
         return customerAddress;
     }
 
+
+    /**
+     * Actualiza la dirección de un cliente en la base de datos.
+     */
     public boolean updateCustomerAddress(int id_customer, String province, String departament, String city, String street, String number, String dpto, String floor) {
         String query = """
                 UPDATE customer_address 
@@ -129,7 +145,9 @@ public class CustomerController {
         }
     }
     
-
+        /**
+     * Obtiene los datos generales de un cliente por su ID.
+     */
 
     public List<String[]> getCustomerData(int id_customer) {
         List<String[]> customerData = new ArrayList<>();
@@ -161,7 +179,9 @@ public class CustomerController {
     
         return customerData;
     }
-
+        /**
+     * Actualiza el perfil de un cliente en la base de datos.
+     */
     public boolean updateCustomerProfile(int customerId, String name, String lastName, String email) {
         String query = """
             UPDATE customer c
